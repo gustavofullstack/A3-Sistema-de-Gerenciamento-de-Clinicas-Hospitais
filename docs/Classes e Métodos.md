@@ -1,109 +1,194 @@
-# 4. Classes e Métodos
+# 4. Classes e Métodos (Atualizado)
 
 ## Visão Geral
 
-O sistema de gerenciamento de clínicas e hospitais foi desenvolvido em Java, seguindo uma arquitetura em camadas que separa claramente as responsabilidades de cada componente. As principais camadas são:
+O sistema de gerenciamento de clínicas e hospitais foi desenvolvido em Java, utilizando o framework **Spring Boot** com **JPA/Hibernate** para persistência de dados. O projeto segue uma arquitetura em camadas, promovendo a separação de responsabilidades e facilitando a manutenção e escalabilidade.
 
-- **Model (Modelo)**: Classes que representam as entidades do sistema.
-- **DAO (Data Access Object)**: Classes responsáveis pela interação com o banco de dados.
-- **Service (Serviço)**: Implementa a lógica de negócio do sistema.
-- **Controller (Controlador)**: Lida com a comunicação entre a interface do usuário (ou API) e a camada de serviço.
-- **Util (Utilitários)**: Fornece classes auxiliares e funções utilitárias.
-- **Exception (Exceções)**: Define exceções personalizadas para tratamento de erros.
+As principais camadas e seus componentes são:
 
-A seguir, apresentamos uma descrição detalhada das principais classes e métodos de cada camada, incluindo suas responsabilidades e interações.
+- **Model (Modelo)**: Classes que representam as entidades do sistema, incluindo anotações JPA para mapeamento objeto-relacional.
+- **Repository (Repositório)**: Interfaces que estendem `JpaRepository`, fornecendo métodos para operações CRUD no banco de dados.
+- **Service (Serviço)**: Implementa a lógica de negócio, aplicando regras e validações.
+- **Controller (Controlador)**: Exposição de endpoints REST para interação com clientes ou interface do usuário.
+- **DTO (Data Transfer Object)**: Classes para transferência de dados entre camadas, especialmente para entrada e saída de dados em APIs.
 
 ---
 
 ## 4.1 Camada Model (Modelo)
 
-As classes da camada Model representam as entidades fundamentais do sistema. Elas contêm atributos que refletem os dados armazenados e métodos básicos para acesso e manipulação desses dados.
+As classes da camada Model representam as entidades do sistema e utilizam anotações do JPA para mapeamento para o banco de dados relacional.
 
 ### 4.1.1 Classe `Paciente`
 
-**Responsabilidade**: Representa um paciente no sistema, armazenando informações pessoais e médicas.
+**Responsabilidade**: Representa um paciente no sistema, armazenando informações pessoais, contato e histórico médico.
+
+**Código Fonte Simplificado**:
+
+```java
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Entity
+public class Paciente {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String nome;
+
+    @Temporal(TemporalType.DATE)
+    private Date dataNascimento;
+
+    @Enumerated(EnumType.STRING)
+    private Genero genero;
+
+    @Embedded
+    private Endereco endereco;
+
+    @Embedded
+    private Contato contato;
+
+    @OneToMany(mappedBy = "paciente", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<HistoricoMedico> historicoMedico;
+
+    @OneToMany(mappedBy = "paciente", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Consulta> consultas;
+}
+```
 
 **Principais Atributos**:
 
-- `int id`: Identificador único do paciente.
+- `Long id`: Identificador único do paciente.
 - `String nome`: Nome completo.
 - `Date dataNascimento`: Data de nascimento.
-- `String genero`: Gênero do paciente.
-- `String cpf`: Número de identificação (CPF).
-- `String endereco`: Endereço residencial.
-- `String telefone`: Número de telefone.
-- `String email`: Endereço de e-mail.
-- `String historicoMedico`: Histórico médico detalhado.
-- `List<String> alergias`: Lista de alergias conhecidas.
-- `List<String> medicamentosEmUso`: Lista de medicamentos que o paciente está utilizando.
-
-**Principais Métodos**:
-
-- `getters` e `setters` para cada atributo.
-- `String getIdade()`: Calcula e retorna a idade atual do paciente.
-- `void adicionarAlergia(String alergia)`: Adiciona uma alergia à lista.
-- `void removerAlergia(String alergia)`: Remove uma alergia da lista.
-- `void adicionarMedicamento(String medicamento)`: Adiciona um medicamento à lista.
-- `void removerMedicamento(String medicamento)`: Remove um medicamento da lista.
+- `Genero genero`: Enum representando o gênero (MASCULINO, FEMININO, OUTRO).
+- `Endereco endereco`: Dados de endereço (classe embutida).
+- `Contato contato`: Informações de contato (classe embutida).
+- `List<HistoricoMedico> historicoMedico`: Histórico médico do paciente.
+- `List<Consulta> consultas`: Consultas associadas ao paciente.
 
 **Interações**:
 
-- Interage com `Consulta` para vincular consultas ao paciente.
-- Utilizada por `PacienteDAO` para operações de persistência.
+- Relacionamento **1:N** com `HistoricoMedico` e `Consulta`.
+- Utiliza `Endereco` e `Contato` como objetos embutidos.
+- Persistência gerenciada pelo JPA/Hibernate.
 
 ---
 
 ### 4.1.2 Classe `Medico`
 
-**Responsabilidade**: Representa um médico, armazenando informações pessoais, profissionais e disponibilidade.
+**Responsabilidade**: Representa um médico, incluindo informações profissionais, contato e disponibilidade.
+
+**Código Fonte Simplificado**:
+
+```java
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Entity
+public class Medico {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String nome;
+
+    private String numeroRegistro;
+
+    @Enumerated(EnumType.STRING)
+    private Especializacao especializacao;
+
+    @Embedded
+    private Endereco endereco;
+
+    @Embedded
+    private Contato contato;
+
+    @OneToMany(mappedBy = "medico")
+    private List<Disponibilidade> disponibilidades;
+
+    @OneToMany(mappedBy = "medico")
+    private List<Consulta> consultas;
+}
+```
 
 **Principais Atributos**:
 
-- `int id`: Identificador único do médico.
+- `Long id`: Identificador único do médico.
 - `String nome`: Nome completo.
-- `String crm`: Número de registro profissional.
-- `String especializacao`: Especialização médica.
-- `String endereco`: Endereço residencial ou profissional.
-- `String telefone`: Contato telefônico.
-- `String email`: Endereço de e-mail.
-- `List<HorarioDisponivel> disponibilidade`: Lista de horários disponíveis para consultas.
-
-**Principais Métodos**:
-
-- `getters` e `setters` para cada atributo.
-- `void adicionarDisponibilidade(HorarioDisponivel horario)`: Adiciona um horário à lista de disponibilidade.
-- `void removerDisponibilidade(HorarioDisponivel horario)`: Remove um horário da lista.
+- `String numeroRegistro`: Número de registro profissional (CRM).
+- `Especializacao especializacao`: Especialização médica (enum).
+- `Endereco endereco`: Dados de endereço.
+- `Contato contato`: Informações de contato.
+- `List<Disponibilidade> disponibilidades`: Horários disponíveis para atendimento.
+- `List<Consulta> consultas`: Consultas realizadas pelo médico.
 
 **Interações**:
 
-- Interage com `Consulta` para vincular consultas ao médico.
-- Utilizada por `MedicoDAO` para operações de persistência.
+- Relacionamento **1:N** com `Disponibilidade` e `Consulta`.
+- Utiliza `Endereco` e `Contato` como objetos embutidos.
+- Especializações definidas pelo enum `Especializacao`.
 
 ---
 
 ### 4.1.3 Classe `Consulta`
 
-**Responsabilidade**: Representa uma consulta médica agendada ou realizada.
+**Responsabilidade**: Representa uma consulta médica, ligando um paciente a um médico em uma data e hora específicas.
+
+**Código Fonte Simplificado**:
+
+```java
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Entity
+public class Consulta {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date dataHora;
+
+    private String motivoConsulta;
+
+    private String observacoesMedicas;
+
+    @ManyToOne
+    @JoinColumn(name = "paciente_id")
+    private Paciente paciente;
+
+    @ManyToOne
+    @JoinColumn(name = "medico_id")
+    private Medico medico;
+
+    @OneToMany(mappedBy = "consulta")
+    private List<Prescricao> prescricoes;
+
+    @OneToMany(mappedBy = "consulta")
+    private List<Exame> exames;
+}
+```
 
 **Principais Atributos**:
 
-- `int id`: Identificador único da consulta.
-- `Paciente paciente`: Paciente que será atendido.
-- `Medico medico`: Médico responsável pelo atendimento.
+- `Long id`: Identificador único da consulta.
 - `Date dataHora`: Data e hora da consulta.
-- `String motivo`: Motivo da consulta.
-- `String observacoes`: Observações e anotações médicas.
-
-**Principais Métodos**:
-
-- `getters` e `setters` para cada atributo.
-- `boolean isAgendada()`: Verifica se a consulta está agendada ou já foi realizada.
-- `void adicionarObservacao(String observacao)`: Adiciona uma observação à consulta.
+- `String motivoConsulta`: Motivo da consulta.
+- `String observacoesMedicas`: Observações do médico.
+- `Paciente paciente`: Paciente atendido.
+- `Medico medico`: Médico responsável.
+- `List<Prescricao> prescricoes`: Prescrições emitidas na consulta.
+- `List<Exame> exames`: Exames solicitados na consulta.
 
 **Interações**:
 
-- Associa `Paciente` e `Medico` por meio de objetos dessas classes.
-- Utilizada por `ConsultaDAO` para operações de persistência.
+- Relacionamento **N:1** com `Paciente` e `Medico`.
+- Relacionamento **1:N** com `Prescricao` e `Exame`.
+- Centraliza a relação entre pacientes, médicos, prescrições e exames.
 
 ---
 
@@ -111,435 +196,638 @@ As classes da camada Model representam as entidades fundamentais do sistema. Ela
 
 **Responsabilidade**: Representa uma prescrição médica emitida durante uma consulta.
 
+**Código Fonte Simplificado**:
+
+```java
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Entity
+public class Prescricao {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String medicamento;
+
+    private String dosagem;
+
+    private String instrucoesUso;
+
+    @ManyToOne
+    @JoinColumn(name = "consulta_id", nullable = false)
+    private Consulta consulta;
+}
+```
+
 **Principais Atributos**:
 
-- `int id`: Identificador único da prescrição.
-- `Consulta consulta`: Consulta na qual a prescrição foi emitida.
-- `List<MedicamentoPrescrito> medicamentos`: Lista de medicamentos prescritos, incluindo dosagens e instruções.
-
-**Principais Métodos**:
-
-- `getters` e `setters` para cada atributo.
-- `void adicionarMedicamento(MedicamentoPrescrito medicamento)`: Adiciona um medicamento à prescrição.
-- `void removerMedicamento(MedicamentoPrescrito medicamento)`: Remove um medicamento da prescrição.
-
-**Interações**:
-
-- Associada a uma `Consulta`.
-- Utiliza `MedicamentoPrescrito` para detalhar cada medicamento.
-- Persistida através de `PrescricaoDAO`.
-
----
-
-### 4.1.5 Classe `MedicamentoPrescrito`
-
-**Responsabilidade**: Representa um medicamento prescrito, incluindo detalhes como dosagem e instruções.
-
-**Principais Atributos**:
-
-- `int id`: Identificador único.
-- `String nome`: Nome do medicamento.
+- `Long id`: Identificador único da prescrição.
+- `String medicamento`: Nome do medicamento.
 - `String dosagem`: Dosagem prescrita.
-- `String instrucoes`: Instruções de uso.
-
-**Principais Métodos**:
-
-- `getters` e `setters` para cada atributo.
+- `String instrucoesUso`: Instruções de uso.
+- `Consulta consulta`: Consulta na qual a prescrição foi emitida.
 
 **Interações**:
 
-- Utilizada dentro de `Prescricao`.
+- Relacionamento **N:1** com `Consulta`.
+- Cada prescrição está associada a uma única consulta.
 
 ---
 
-### 4.1.6 Classe `Estoque`
+### 4.1.5 Classe `Exame`
 
-**Responsabilidade**: Gerencia o estoque de medicamentos e materiais médicos.
+**Responsabilidade**: Representa um exame solicitado durante uma consulta.
+
+**Código Fonte Simplificado**:
+
+```java
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Entity
+public class Exame {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String nomeExame;
+
+    private String resultado;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date dataExame;
+
+    @ManyToOne
+    @JoinColumn(name = "consulta_id", nullable = false)
+    private Consulta consulta;
+}
+```
 
 **Principais Atributos**:
 
-- `Map<String, Integer> itens`: Mapa de itens (nome do medicamento/material) e suas quantidades em estoque.
-
-**Principais Métodos**:
-
-- `void adicionarItem(String nome, int quantidade)`: Adiciona quantidade de um item ao estoque.
-- `void removerItem(String nome, int quantidade)`: Remove quantidade de um item do estoque.
-- `int verificarQuantidade(String nome)`: Retorna a quantidade disponível de um item.
-- `List<String> listarItensBaixoEstoque()`: Retorna uma lista de itens com estoque abaixo do nível crítico.
+- `Long id`: Identificador único do exame.
+- `String nomeExame`: Nome do exame.
+- `String resultado`: Resultado do exame.
+- `Date dataExame`: Data de realização do exame.
+- `Consulta consulta`: Consulta associada ao exame.
 
 **Interações**:
 
-- Utilizada por `EstoqueService` para lógica de negócio.
-- Pode interagir com `MedicamentoPrescrito` para atualizar o estoque após uma prescrição.
+- Relacionamento **N:1** com `Consulta`.
+- Os exames estão vinculados à consulta em que foram solicitados.
 
 ---
 
-## 4.2 Camada DAO (Data Access Object)
+### 4.1.6 Classe `HistoricoMedico`
 
-As classes DAO são responsáveis pela comunicação com o banco de dados, executando operações de persistência.
+**Responsabilidade**: Mantém o histórico de condições de saúde, tratamentos e alergias de um paciente.
 
-### 4.2.1 Classe `PacienteDAO`
+**Código Fonte Simplificado**:
 
-**Responsabilidade**: Realiza operações de CRUD (Create, Read, Update, Delete) para objetos `Paciente`.
+```java
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Entity
+public class HistoricoMedico {
 
-**Principais Métodos**:
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-- `void inserir(Paciente paciente)`: Insere um novo paciente no banco de dados.
-- `Paciente buscarPorId(int id)`: Recupera um paciente pelo ID.
-- `List<Paciente> buscarTodos()`: Retorna uma lista de todos os pacientes.
-- `void atualizar(Paciente paciente)`: Atualiza os dados de um paciente existente.
-- `void deletar(int id)`: Remove um paciente do banco de dados.
+    private String condicao;
+
+    private String tratamento;
+
+    private String alergias;
+
+    private String medicamentosEmUso;
+
+    @ManyToOne
+    @JoinColumn(name = "paciente_id", nullable = false)
+    private Paciente paciente;
+}
+```
+
+**Principais Atributos**:
+
+- `Long id`: Identificador único do histórico.
+- `String condicao`: Condições de saúde.
+- `String tratamento`: Tratamentos realizados.
+- `String alergias`: Alergias conhecidas.
+- `String medicamentosEmUso`: Medicamentos em uso.
+- `Paciente paciente`: Paciente associado.
 
 **Interações**:
 
-- Utiliza `DatabaseUtil` para obter conexões com o banco de dados.
-- Chamado por `PacienteService` para acessar dados.
+- Relacionamento **N:1** com `Paciente`.
+- Permite rastrear o histórico médico ao longo do tempo.
 
 ---
 
-### 4.2.2 Classe `MedicoDAO`
+### 4.1.7 Classe `Endereco`
 
-**Responsabilidade**: Realiza operações de CRUD para objetos `Medico`.
+**Responsabilidade**: Encapsula os dados de endereço.
 
-**Principais Métodos**:
+**Código Fonte Simplificado**:
 
-- `void inserir(Medico medico)`: Insere um novo médico no banco de dados.
-- `Medico buscarPorId(int id)`: Recupera um médico pelo ID.
-- `List<Medico> buscarTodos()`: Retorna uma lista de todos os médicos.
-- `void atualizar(Medico medico)`: Atualiza os dados de um médico existente.
-- `void deletar(int id)`: Remove um médico do banco de dados.
+```java
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Embeddable
+public class Endereco {
+
+    private String rua;
+    private String cep;
+    private String bairro;
+    private String numero;
+    private String cidade;
+    private String complemento;
+}
+```
+
+**Principais Atributos**:
+
+- `String rua`
+- `String cep`
+- `String bairro`
+- `String numero`
+- `String cidade`
+- `String complemento`
 
 **Interações**:
 
-- Interage com o banco de dados através de `DatabaseUtil`.
-- Chamado por `MedicoService`.
+- Utilizada como classe embutida em `Paciente` e `Medico`.
+- Não possui identidade própria no banco de dados.
 
 ---
 
-### 4.2.3 Classe `ConsultaDAO`
+### 4.1.8 Classe `Contato`
 
-**Responsabilidade**: Gerencia operações de persistência para `Consulta`.
+**Responsabilidade**: Armazena informações de contato.
 
-**Principais Métodos**:
+**Código Fonte Simplificado**:
 
-- `void inserir(Consulta consulta)`: Insere uma nova consulta.
-- `Consulta buscarPorId(int id)`: Busca uma consulta pelo ID.
-- `List<Consulta> buscarPorPaciente(int pacienteId)`: Busca consultas de um paciente específico.
-- `List<Consulta> buscarPorMedico(int medicoId)`: Busca consultas de um médico específico.
-- `void atualizar(Consulta consulta)`: Atualiza os dados de uma consulta.
-- `void deletar(int id)`: Remove uma consulta.
+```java
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Embeddable
+public class Contato {
+
+    private String telefone;
+    private String email;
+}
+```
+
+**Principais Atributos**:
+
+- `String telefone`
+- `String email`
 
 **Interações**:
 
-- Utiliza `DatabaseUtil` para conexões.
-- Interage com `Paciente` e `Medico` para obter informações relacionadas.
+- Utilizada como classe embutida em `Paciente` e `Medico`.
 
 ---
 
-### 4.2.4 Classe `PrescricaoDAO`
+### 4.1.9 Classe `Disponibilidade`
 
-**Responsabilidade**: Gerencia a persistência de `Prescricao`.
+**Responsabilidade**: Gerencia os horários disponíveis dos médicos para atendimento.
 
-**Principais Métodos**:
+**Código Fonte Simplificado**:
 
-- `void inserir(Prescricao prescricao)`: Insere uma nova prescrição.
-- `Prescricao buscarPorId(int id)`: Recupera uma prescrição pelo ID.
-- `List<Prescricao> buscarPorConsulta(int consultaId)`: Recupera prescrições de uma consulta específica.
-- `void atualizar(Prescricao prescricao)`: Atualiza uma prescrição.
-- `void deletar(int id)`: Remove uma prescrição.
+```java
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Entity
+public class Disponibilidade {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private Date inicio;
+
+    private Date fim;
+
+    private boolean disponivel;
+
+    @ManyToOne
+    @JoinColumn(name = "medico_id")
+    private Medico medico;
+}
+```
+
+**Principais Atributos**:
+
+- `Long id`: Identificador único da disponibilidade.
+- `Date inicio`: Início do período disponível.
+- `Date fim`: Fim do período disponível.
+- `boolean disponivel`: Indica se o horário está disponível.
+- `Medico medico`: Médico associado.
 
 **Interações**:
 
-- Interage com `ConsultaDAO` para garantir a integridade referencial.
-- Utiliza `DatabaseUtil` para acesso ao banco.
+- Relacionamento **N:1** com `Medico`.
+- Utilizada para verificar a disponibilidade dos médicos no agendamento de consultas.
+
+---
+
+### 4.1.10 Enum `Especializacao`
+
+**Responsabilidade**: Define as especializações médicas disponíveis.
+
+**Código Fonte Simplificado**:
+
+```java
+public enum Especializacao {
+    CARDIOLOGIA,
+    PEDIATRIA,
+    ORTOPEDIA,
+    GINECOLOGIA,
+    DERMATOLOGIA,
+    NEUROLOGIA,
+    // Outros...
+}
+```
+
+**Interações**:
+
+- Utilizada em `Medico` para especificar a área de atuação.
+
+---
+
+### 4.1.11 Enum `Genero`
+
+**Responsabilidade**: Representa o gênero do paciente.
+
+**Código Fonte Simplificado**:
+
+```java
+public enum Genero {
+    MASCULINO,
+    FEMININO,
+    OUTRO
+}
+```
+
+**Interações**:
+
+- Utilizada em `Paciente`.
+
+---
+
+## 4.2 Camada Repository (Repositório)
+
+As interfaces de repositório estendem `JpaRepository`, fornecendo métodos padrão para operações CRUD. Exemplos:
+
+### 4.2.1 Interface `PacienteRepository`
+
+```java
+public interface PacienteRepository extends JpaRepository<Paciente, Long> {
+    List<Paciente> findByNomeContaining(String nome);
+}
+```
+
+**Responsabilidade**:
+
+- Fornece métodos para interagir com o banco de dados em relação aos pacientes.
+- Métodos customizados podem ser adicionados conforme necessário.
+
+---
+
+### 4.2.2 Interface `MedicoRepository`
+
+```java
+public interface MedicoRepository extends JpaRepository<Medico, Long> {
+    List<Medico> findByEspecializacao(Especializacao especializacao);
+}
+```
+
+**Responsabilidade**:
+
+- Gerencia operações relacionadas aos médicos.
+- Permite buscar médicos por especialização.
 
 ---
 
 ## 4.3 Camada Service (Serviço)
 
-As classes de serviço contêm a lógica de negócio do sistema, aplicando regras e validações.
+Implementa a lógica de negócio, aplicando validações e regras antes de interagir com a camada de persistência.
 
 ### 4.3.1 Classe `PacienteService`
 
-**Responsabilidade**: Gerencia as operações relacionadas a pacientes, aplicando regras de negócio.
+**Responsabilidade**:
+
+- Gerencia operações relacionadas a pacientes.
+- Aplica validações de negócio.
 
 **Principais Métodos**:
 
-- `void cadastrarPaciente(Paciente paciente)`: Valida e cadastra um novo paciente.
-- `Paciente obterPaciente(int id)`: Recupera um paciente, aplicando regras de acesso.
-- `List<Paciente> listarPacientes()`: Lista todos os pacientes.
-- `void atualizarPaciente(Paciente paciente)`: Valida e atualiza os dados de um paciente.
-- `void removerPaciente(int id)`: Verifica se o paciente pode ser removido e realiza a exclusão.
+- `Paciente salvar(Paciente paciente)`: Valida e salva um paciente.
+- `Paciente buscarPorId(Long id)`: Retorna um paciente pelo ID.
+- `List<Paciente> buscarTodos()`: Retorna todos os pacientes.
+- `void excluir(Long id)`: Remove um paciente.
 
 **Interações**:
 
-- Chama `PacienteDAO` para operações de persistência.
-- Pode lançar `BusinessException` em caso de violação de regras de negócio.
+- Utiliza `PacienteRepository` para persistência.
+- Pode lançar exceções personalizadas em caso de erros.
 
 ---
 
 ### 4.3.2 Classe `MedicoService`
 
-**Responsabilidade**: Gerencia operações relacionadas aos médicos.
+**Responsabilidade**:
+
+- Gerencia operações relacionadas aos médicos.
 
 **Principais Métodos**:
 
-- `void cadastrarMedico(Medico medico)`: Valida e cadastra um novo médico.
-- `Medico obterMedico(int id)`: Recupera informações de um médico.
-- `List<Medico> listarMedicos()`: Lista todos os médicos.
-- `void atualizarMedico(Medico medico)`: Atualiza dados do médico.
-- `void removerMedico(int id)`: Remove um médico após verificar dependências.
+- `Medico salvar(Medico medico)`: Salva um médico após validações.
+- `Medico buscarPorId(Long id)`: Retorna um médico pelo ID.
+- `List<Medico> buscarTodos()`: Lista todos os médicos.
+- `void excluir(Long id)`: Remove um médico.
 
 **Interações**:
 
-- Chama `MedicoDAO` para persistência.
-- Interage com `ConsultaService` para verificar agendamentos.
+- Utiliza `MedicoRepository`.
 
 ---
 
 ### 4.3.3 Classe `ConsultaService`
 
-**Responsabilidade**: Gerencia o agendamento e registro de consultas.
+**Responsabilidade**:
+
+- Gerencia o agendamento e registro de consultas.
 
 **Principais Métodos**:
 
-- `void agendarConsulta(Consulta consulta)`: Valida disponibilidade e agenda uma consulta.
-- `Consulta obterConsulta(int id)`: Recupera detalhes de uma consulta.
-- `List<Consulta> listarConsultasPorPaciente(int pacienteId)`: Lista consultas de um paciente.
-- `void atualizarConsulta(Consulta consulta)`: Atualiza informações da consulta.
-- `void cancelarConsulta(int id)`: Cancela uma consulta agendada.
+- `Consulta agendarConsulta(Consulta consulta)`: Agenda uma nova consulta após validações.
+- `Consulta buscarPorId(Long id)`: Retorna detalhes de uma consulta.
+- `void cancelarConsulta(Long id)`: Cancela uma consulta existente.
 
 **Interações**:
 
-- Verifica disponibilidade de `Medico` e `Paciente`.
-- Chama `ConsultaDAO` para persistência.
-- Pode enviar notificações (via `NotificationService`, se existente).
-
----
-
-### 4.3.4 Classe `PrescricaoService`
-
-**Responsabilidade**: Gerencia a emissão e registro de prescrições médicas.
-
-**Principais Métodos**:
-
-- `void emitirPrescricao(Prescricao prescricao)`: Valida e registra uma nova prescrição.
-- `Prescricao obterPrescricao(int id)`: Recupera uma prescrição específica.
-- `List<Prescricao> listarPrescricoesPorPaciente(int pacienteId)`: Lista prescrições de um paciente.
-- `void atualizarPrescricao(Prescricao prescricao)`: Atualiza os detalhes de uma prescrição.
-- `void removerPrescricao(int id)`: Remove uma prescrição existente.
-
-**Interações**:
-
-- Chama `PrescricaoDAO` para persistência.
-- Interage com `EstoqueService` para verificar disponibilidade de medicamentos.
-
----
-
-### 4.3.5 Classe `EstoqueService`
-
-**Responsabilidade**: Gerencia o estoque de medicamentos, monitorando níveis e reposições.
-
-**Principais Métodos**:
-
-- `void adicionarItemEstoque(String nome, int quantidade)`: Adiciona itens ao estoque.
-- `void consumirItemEstoque(String nome, int quantidade)`: Consome itens do estoque.
-- `int verificarQuantidadeEstoque(String nome)`: Verifica quantidade disponível.
-- `List<String> obterItensBaixoEstoque()`: Retorna lista de itens com estoque crítico.
-
-**Interações**:
-
-- Utiliza `Estoque` para manipulação dos dados.
-- Pode enviar alertas de baixo estoque (via `NotificationService`).
+- Verifica disponibilidade do médico (`Disponibilidade`).
+- Utiliza `ConsultaRepository`.
 
 ---
 
 ## 4.4 Camada Controller (Controlador)
 
-Os controladores lidam com a interação entre a interface do usuário ou API e a camada de serviço.
+Exposição de endpoints REST para interação com o sistema.
 
 ### 4.4.1 Classe `PacienteController`
 
-**Responsabilidade**: Controla as operações relacionadas a pacientes.
+**Responsabilidade**:
 
-**Principais Métodos**:
+- Define endpoints para operações com pacientes.
 
-- `String cadastrarPaciente(HttpServletRequest request)`: Recebe dados do paciente, chama `PacienteService` e retorna uma resposta.
-- `String visualizarPaciente(int id)`: Obtém detalhes de um paciente e os apresenta.
-- `String atualizarPaciente(HttpServletRequest request)`: Atualiza informações do paciente.
-- `String removerPaciente(int id)`: Remove um paciente do sistema.
+**Principais Endpoints**:
+
+- `POST /pacientes`: Cadastra um novo paciente.
+- `GET /pacientes/{id}`: Recupera informações de um paciente.
+- `GET /pacientes`: Lista todos os pacientes.
+- `PUT /pacientes/{id}`: Atualiza informações de um paciente.
+- `DELETE /pacientes/{id}`: Remove um paciente.
 
 **Interações**:
 
-- Chama `PacienteService` para lógica de negócio.
-- Processa dados de entrada e saída para a interface.
+- Utiliza `PacienteService`.
 
 ---
 
 ### 4.4.2 Classe `MedicoController`
 
-**Responsabilidade**: Controla operações relacionadas aos médicos.
+**Responsabilidade**:
 
-**Principais Métodos**:
+- Define endpoints para operações com médicos.
 
-- `String cadastrarMedico(HttpServletRequest request)`: Registra um novo médico.
-- `String visualizarMedico(int id)`: Apresenta detalhes de um médico.
-- `String atualizarMedico(HttpServletRequest request)`: Atualiza dados do médico.
-- `String removerMedico(int id)`: Remove um médico do sistema.
+**Principais Endpoints**:
+
+- `POST /medicos`: Cadastra um novo médico.
+- `GET /medicos/{id}`: Recupera informações de um médico.
+- `GET /medicos`: Lista todos os médicos.
+- `PUT /medicos/{id}`: Atualiza informações de um médico.
+- `DELETE /medicos/{id}`: Remove um médico.
 
 **Interações**:
 
-- Chama `MedicoService`.
-- Interage com a interface para entrada e saída de dados.
+- Utiliza `MedicoService`.
 
 ---
 
 ### 4.4.3 Classe `ConsultaController`
 
-**Responsabilidade**: Gerencia as operações de agendamento e visualização de consultas.
+**Responsabilidade**:
 
-**Principais Métodos**:
+- Gerencia endpoints relacionados a consultas.
 
-- `String agendarConsulta(HttpServletRequest request)`: Recebe dados para agendamento e processa a solicitação.
-- `String visualizarConsulta(int id)`: Exibe detalhes de uma consulta.
-- `String atualizarConsulta(HttpServletRequest request)`: Atualiza informações da consulta.
-- `String cancelarConsulta(int id)`: Processa o cancelamento de uma consulta.
+**Principais Endpoints**:
 
-**Interações**:
-
-- Chama `ConsultaService`.
-- Pode interagir com `PacienteController` e `MedicoController` para obter informações adicionais.
-
----
-
-## 4.5 Camada Util (Utilitários)
-
-Contém classes auxiliares que fornecem funcionalidades de suporte.
-
-### 4.5.1 Classe `DatabaseUtil`
-
-**Responsabilidade**: Gerencia conexões com o banco de dados.
-
-**Principais Métodos**:
-
-- `Connection getConnection()`: Estabelece e retorna uma conexão com o banco de dados.
-- `void closeConnection(Connection conn)`: Fecha uma conexão existente.
-- `void closeResources(Statement stmt, ResultSet rs)`: Fecha recursos utilizados nas operações.
+- `POST /consultas`: Agenda uma nova consulta.
+- `GET /consultas/{id}`: Detalhes de uma consulta.
+- `GET /consultas`: Lista consultas com filtros opcionais.
+- `PUT /consultas/{id}`: Atualiza uma consulta.
+- `DELETE /consultas/{id}`: Cancela uma consulta.
 
 **Interações**:
 
-- Utilizada por todas as classes DAO.
+- Utiliza `ConsultaService`.
 
 ---
 
-### 4.5.2 Classe `DateUtil`
+## 4.5 Camada DTO (Data Transfer Object)
 
-**Responsabilidade**: Fornece métodos para manipulação de datas.
+Os DTOs são utilizados para transferir dados entre as camadas, especialmente para entrada e saída de dados nas APIs, garantindo que apenas as informações necessárias sejam expostas.
 
-**Principais Métodos**:
+### 4.5.1 Classe `PacienteDTO`
 
-- `Date stringToDate(String dataString)`: Converte uma `String` para um objeto `Date`.
-- `String dateToString(Date data)`: Converte um objeto `Date` para `String` formatada.
-- `int calcularIdade(Date dataNascimento)`: Calcula a idade a partir da data de nascimento.
+**Responsabilidade**:
+
+- Representa os dados do paciente para transferência.
+
+**Principais Atributos**:
+
+- `Long id`
+- `String nome`
+- `Date dataNascimento`
+- `Genero genero`
+- `Endereco endereco`
+- `Contato contato`
 
 **Interações**:
 
-- Utilizada por classes que lidam com datas, como `Paciente` e `Consulta`.
+- Utilizada nos controladores para receber e enviar dados.
 
 ---
 
-### 4.5.3 Classe `ValidationUtil`
+### 4.5.2 Classe `ConsultaDTO`
 
-**Responsabilidade**: Contém métodos para validação de dados de entrada.
+**Responsabilidade**:
 
-**Principais Métodos**:
+- Representa os dados da consulta.
 
-- `boolean isCPFValido(String cpf)`: Verifica se o CPF é válido.
-- `boolean isEmailValido(String email)`: Verifica se o e-mail tem um formato válido.
-- `boolean isDataFutura(Date data)`: Verifica se a data informada é futura.
-- `void validarPaciente(Paciente paciente)`: Executa várias validações nos dados do paciente.
+**Principais Atributos**:
+
+- `Long id`
+- `Long pacienteId`
+- `Long medicoId`
+- `Date dataHora`
+- `String motivoConsulta`
+- `String observacoesMedicas`
 
 **Interações**:
 
-- Utilizada pelas classes de serviço antes de operações críticas.
+- Facilita a transferência de dados sem expor entidades completas.
 
 ---
 
-## 4.6 Camada Exception (Exceções)
+## 4.6 Fluxo de Interações Atualizado
 
-Define exceções personalizadas para tratamento de erros específicos.
+### Caso de Uso: Agendamento de Consulta
 
-### 4.6.1 Classe `DataAccessException`
+1. **Cliente**: Envia uma requisição `POST` para `/consultas` com os dados da consulta no corpo da requisição.
 
-**Responsabilidade**: Exceção lançada em caso de erros ao acessar o banco de dados.
+2. **`ConsultaController.agendarConsulta(@RequestBody ConsultaDTO consultaDTO)`**:
 
-**Principais Construtores**:
-
-- `DataAccessException(String mensagem)`: Cria uma exceção com uma mensagem específica.
-- `DataAccessException(String mensagem, Throwable causa)`: Cria uma exceção com mensagem e causa.
-
-**Interações**:
-
-- Lançada pelas classes DAO.
-- Capturada pelas classes de serviço ou controladores.
-
----
-
-### 4.6.2 Classe `BusinessException`
-
-**Responsabilidade**: Exceção lançada quando ocorre uma violação de regras de negócio.
-
-**Principais Construtores**:
-
-- `BusinessException(String mensagem)`: Cria uma exceção com uma mensagem específica.
-- `BusinessException(String mensagem, Throwable causa)`: Cria uma exceção com mensagem e causa.
-
-**Interações**:
-
-- Lançada pelas classes de serviço.
-- Capturada pelos controladores para apresentar mensagens ao usuário.
-
----
-
-## 4.7 Fluxo de Interações
-
-Para ilustrar as interações entre as classes, vamos descrever o fluxo de uma operação comum: **Agendamento de uma Consulta**.
-
-1. **O usuário (paciente ou atendente) solicita o agendamento de uma consulta** através da interface do usuário.
-
-2. **`ConsultaController.agendarConsulta(HttpServletRequest request)`**:
-   - Recebe os dados da solicitação.
-   - Extrai informações como pacienteId, medicoId, data e hora desejadas.
+   - Recebe o DTO e o converte em uma entidade `Consulta`.
+   - Chama o `ConsultaService` para processar o agendamento.
 
 3. **`ConsultaService.agendarConsulta(Consulta consulta)`**:
-   - Recebe o objeto `Consulta` com os dados preenchidos.
-   - **Validações**:
-     - Verifica se o paciente existe (`PacienteService.obterPaciente(int id)`).
-     - Verifica se o médico existe e está disponível (`MedicoService.obterMedico(int id)`).
-     - Verifica se o horário não está ocupado (`ConsultaDAO.buscarPorMedicoEData(medicoId, dataHora)`).
-   - **Regras de Negócio**:
-     - Não permitir agendamento em datas passadas.
-     - Limitar o número de consultas por dia para um médico.
-   - Em caso de sucesso, prossegue para persistência.
-   - Em caso de erro, lança `BusinessException`.
 
-4. **`ConsultaDAO.inserir(Consulta consulta)`**:
-   - Executa a operação de inserção no banco de dados.
-   - Em caso de falha na conexão ou execução, lança `DataAccessException`.
+   - Valida os dados da consulta.
+   - Verifica se o médico está disponível (`Disponibilidade`).
+   - Salva a consulta utilizando o `ConsultaRepository`.
 
-5. **Resposta ao Usuário**:
-   - Se tudo ocorrer bem, o controlador retorna uma mensagem de sucesso.
-   - Se ocorrer uma exceção, o controlador captura e apresenta uma mensagem de erro amigável.
+4. **`ConsultaRepository.save(consulta)`**:
+
+   - Persiste a consulta no banco de dados.
+
+5. **Resposta**:
+
+   - Retorna o `ConsultaDTO` com os dados da consulta agendada e o status HTTP adequado.
 
 ---
 
-## 4.8 Diagrama de Classes
+## 4.7 Diagrama de Classes
 
-Para uma melhor visualização das relações entre as classes, consulte o diagrama de classes disponível em `docs/diagrama_classes.png`.
+Segue o diagrama de classes atualizado, representando as entidades e seus relacionamentos.
+
+![Diagrama de Classes](docs/diagrama_classes.png)
+
+**Nota**: O diagrama de classes está disponível no diretório `docs/diagrama_classes.png`.
 
 ---
 
-## Conclusão
+## 4.8 Considerações sobre os Relacionamentos
 
-A organização das classes e métodos foi cuidadosamente planejada para garantir a coesão e o baixo acoplamento entre os componentes do sistema. Cada classe possui responsabilidades bem definidas, facilitando a manutenção e a escalabilidade do sistema. As interações entre as classes seguem os princípios da orientação a objetos, promovendo reutilização e flexibilidade.
+- **Paciente e Medico**:
 
+  - Ambos possuem endereço e contato como objetos embutidos (`@Embeddable`), evitando a criação de tabelas separadas para essas informações.
+
+- **Consulta**:
+
+  - Atua como ponto central, relacionando pacientes, médicos, prescrições e exames.
+
+- **Disponibilidade**:
+
+  - Permite gerenciar os horários de atendimento dos médicos, essencial para o agendamento de consultas.
+
+- **HistoricoMedico**:
+
+  - Fornece um registro completo das condições e tratamentos do paciente ao longo do tempo.
+
+- **Prescricao e Exame**:
+
+  - Associados a uma consulta específica, facilitando o rastreamento de tratamentos e diagnósticos.
+
+---
+
+## 4.9 Exemplo de Implementação de Métodos
+
+### 4.9.1 `PacienteService`
+
+```java
+@Service
+public class PacienteService {
+
+    @Autowired
+    private PacienteRepository pacienteRepository;
+
+    public Paciente salvar(Paciente paciente) {
+        // Validações personalizadas
+        if (paciente.getNome() == null || paciente.getNome().isEmpty()) {
+            throw new BusinessException("O nome do paciente é obrigatório.");
+        }
+        // Outras validações...
+
+        return pacienteRepository.save(paciente);
+    }
+
+    public Paciente buscarPorId(Long id) {
+        return pacienteRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Paciente não encontrado."));
+    }
+
+    public List<Paciente> buscarTodos() {
+        return pacienteRepository.findAll();
+    }
+
+    public void excluir(Long id) {
+        Paciente paciente = buscarPorId(id);
+        pacienteRepository.delete(paciente);
+    }
+}
+```
+
+---
+
+## 4.10 Exceções Personalizadas
+
+### 4.10.1 `BusinessException`
+
+**Responsabilidade**:
+
+- Exceção para erros de validação e regras de negócio.
+
+**Código Fonte Simplificado**:
+
+```java
+public class BusinessException extends RuntimeException {
+    public BusinessException(String mensagem) {
+        super(mensagem);
+    }
+}
+```
+
+### 4.10.2 `NotFoundException`
+
+**Responsabilidade**:
+
+- Exceção para recursos não encontrados.
+
+**Código Fonte Simplificado**:
+
+```java
+public class NotFoundException extends RuntimeException {
+    public NotFoundException(String mensagem) {
+        super(mensagem);
+    }
+}
+```
+
+---
+
+## 4.11 Conclusão
+
+A modelagem das classes reflete as necessidades funcionais do sistema, garantindo que todas as informações essenciais sejam armazenadas e gerenciadas de forma eficiente. A utilização de anotações JPA facilita o mapeamento objeto-relacional, enquanto a separação em camadas promove uma arquitetura limpa e organizada.
+
+A compreensão das responsabilidades de cada classe e de seus métodos é fundamental para o desenvolvimento e manutenção do sistema, permitindo que novos desenvolvedores se integrem rapidamente ao projeto e contribuam de forma efetiva.
