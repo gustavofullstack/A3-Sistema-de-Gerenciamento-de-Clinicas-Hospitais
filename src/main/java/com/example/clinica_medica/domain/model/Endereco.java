@@ -11,7 +11,6 @@ import lombok.NoArgsConstructor;
 @Embeddable
 public class Endereco {
 
-    private Long id;
     private String rua;
     private String cep;
     private String bairro;

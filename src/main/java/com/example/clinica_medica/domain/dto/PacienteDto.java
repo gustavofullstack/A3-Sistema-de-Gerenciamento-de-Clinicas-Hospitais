@@ -1,7 +1,10 @@
-package com.example.clinica_medica.domain.model;
+package com.example.clinica_medica.domain.dto;
 
 import com.example.clinica_medica.domain.enuns.Genero;
-import jakarta.persistence.*;
+import com.example.clinica_medica.domain.model.Consulta;
+import com.example.clinica_medica.domain.model.Contato;
+import com.example.clinica_medica.domain.model.Endereco;
+import com.example.clinica_medica.domain.model.HistoricoMedico;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,32 +15,16 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity
-public class Paciente {
+public class PacienteDto {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String nome;
-
     private String cpf;
-
-    @Temporal(TemporalType.DATE)
     private Date dataNascimento;
-
-    @Enumerated(EnumType.STRING)
     private Genero genero;
-
-    @Embedded
     private Endereco endereco;
-
-    @Embedded
     private Contato contato;
-
-    @OneToMany(mappedBy = "paciente", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<HistoricoMedico> historicoMedico;
-
-    @OneToMany(mappedBy = "paciente", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Consulta> consultas;
+
 }
