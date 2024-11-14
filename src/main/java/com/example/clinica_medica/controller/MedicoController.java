@@ -1,7 +1,7 @@
 package com.example.clinica_medica.controller;
 
-import com.example.clinica_medica.domain.dto.PacienteDto;
-import com.example.clinica_medica.domain.service.PacienteService;
+import com.example.clinica_medica.domain.dto.MedicoDto;
+import com.example.clinica_medica.domain.service.MedicoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,23 +13,23 @@ import java.util.List;
 import java.util.Optional;
 
 @Controller
-@RequestMapping("/pacientes")
-public class PacienteController {
+@RequestMapping("/medicos")
+public class MedicoController {
 
     @Autowired
-    private PacienteService pacienteService;
+    private MedicoService medicoService;
 
     @GetMapping("/todos")
-    public ResponseEntity<List<Object>> buscarTodosPacientes(){
+    public ResponseEntity<List<Object>> buscarTodosMedicos(){
         try{
 
-            List<PacienteDto> paciente = pacienteService.buscarTodosPacientes();
+            List<MedicoDto> medicos = medicoService.buscarTodosMedicos();
 
-            if (paciente.isEmpty()){
-                throw new Exception("Não existe paciente!");
+            if (medicos.isEmpty()){
+                throw new Exception("Não existe medicos!");
             }
 
-            return ResponseEntity.ok(Collections.singletonList(paciente));
+            return ResponseEntity.ok(Collections.singletonList(medicos));
 
         }catch (Exception e){
             return ResponseEntity.internalServerError().body(Collections.singletonList(e.getMessage()));
@@ -37,16 +37,16 @@ public class PacienteController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Object> consultarTodosDadosPacientesPeloId(@PathVariable Long id) {
+    public ResponseEntity<Object> consultarDadosBasicosPacientePeloId(@PathVariable Long id) {
         try {
 
-            PacienteDto pacienteDto = pacienteService.consultarDadosPacientePeloId(id);
+            MedicoDto medico = medicoService.consultarDadosMedicoPeloId(id);
 
-            if(Optional.ofNullable(pacienteDto).isEmpty()){
+            if(Optional.ofNullable(medico).isEmpty()){
                 return ResponseEntity.noContent().build();
             }
 
-            return ResponseEntity.ok().body(pacienteDto);
+            return ResponseEntity.ok().body(medico);
 
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body(e.getMessage());
@@ -54,11 +54,10 @@ public class PacienteController {
     }
 
     @PostMapping("/salvar")
-    @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<Object> salvarPaciente(@RequestBody PacienteDto pacienteDto){
+    public ResponseEntity<Object> salvarMedico(@RequestBody MedicoDto medicoDto){
         try {
 
-            pacienteService.salvarPaciente(pacienteDto);
+            medicoService.salvarMedico(medicoDto);
             return ResponseEntity.noContent().build();
 
         }catch (Exception e){
@@ -66,12 +65,12 @@ public class PacienteController {
         }
     }
 
-    @PutMapping("/{idPaciente}")
-    public ResponseEntity<Object> updatePaciente(@RequestBody PacienteDto pacienteDto, @PathVariable("idPaciente") Long id){
+    @PutMapping("/{idMedico}")
+    public ResponseEntity<Object> updateMedico(@RequestBody MedicoDto medicoDto, @PathVariable("idMedico") Long id){
         try {
 
-            pacienteDto.setId(id);
-            pacienteService.alterarPaciente(pacienteDto);
+            medicoDto.setId(id);
+            medicoService.alterarMedico(medicoDto);
             return ResponseEntity.noContent().build();
 
         }catch (Exception e){
@@ -79,11 +78,11 @@ public class PacienteController {
         }
     }
 
-    @DeleteMapping("/{idPaciente}")
-    public ResponseEntity<Object> deletarPaciente(@PathVariable("idPaciente") Long id){
+    @DeleteMapping("/{idMedico}")
+    public ResponseEntity<Object> deletarMedico(@PathVariable("idMedico") Long id){
         try {
 
-            pacienteService.deletarPaciente(id);
+            medicoService.deletarMedico(id);
             return ResponseEntity.noContent().build();
 
         }catch (Exception e){

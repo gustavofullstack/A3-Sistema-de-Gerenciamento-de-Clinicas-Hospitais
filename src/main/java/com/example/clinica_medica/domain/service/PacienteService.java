@@ -17,6 +17,60 @@ public class PacienteService {
     @Autowired
     private PacienteRepository pacienteRepository;
 
+    public PacienteDto consultarDadosPacientePeloId(Long id){
+
+        Paciente paciente = pacienteRepository.findOneById(id);
+        PacienteDto pacienteDto = toDto(paciente);
+        return pacienteDto;
+    }
+
+    public List<PacienteDto> buscarTodosPacientes() throws BusinessException{
+        try {
+
+            List<Paciente> pacientes = pacienteRepository.findAll();
+            return toDtoList(pacientes);
+
+        } catch (Exception e) {
+            throw new BusinessException("Não foi possível listar todos os restaurantes.");
+        }
+    }
+
+    @Transactional
+    public void salvarPaciente(PacienteDto pacienteDto) throws BusinessException{
+        Paciente paciente = toEntity(pacienteDto);
+        this.pacienteRepository.save(paciente);
+    }
+
+    @Transactional
+    public void alterarPaciente(PacienteDto pacienteDto) throws BusinessException {
+        pacienteRepository.findById(pacienteDto.getId())
+                .orElseThrow(() -> new BusinessException(String.format("Paciente com ID %d não encontrado para atualização.", pacienteDto.getId())));
+
+        pacienteRepository.updateById(
+                pacienteDto.getId(),
+                pacienteDto.getNome(),
+                pacienteDto.getCpf(),
+                pacienteDto.getDataNascimento(),
+                pacienteDto.getGenero().toString(),
+                pacienteDto.getEndereco().getRua(),
+                pacienteDto.getEndereco().getCep(),
+                pacienteDto.getEndereco().getBairro(),
+                pacienteDto.getEndereco().getNumero(),
+                pacienteDto.getEndereco().getCidade(),
+                pacienteDto.getEndereco().getComplemento(),
+                pacienteDto.getContato().getTelefone(),
+                pacienteDto.getContato().getEmail()
+        );
+    }
+
+    @Transactional
+    public void deletarPaciente(Long idRestaurante) throws BusinessException{
+        Paciente paciente = pacienteRepository.findById(idRestaurante)
+                .orElseThrow(() -> new BusinessException("Paciente não encontrado"));
+
+        pacienteRepository.delete(paciente);
+    }
+
     private PacienteDto toDto(Paciente paciente){
         try {
             if (paciente == null) {
@@ -76,57 +130,4 @@ public class PacienteService {
 
     }
 
-    public PacienteDto consultarDadosBasicosPacientePeloId(Long id){
-
-        Paciente paciente = pacienteRepository.findOneById(id);
-        PacienteDto pacienteDto = toDto(paciente);
-        return pacienteDto;
-    }
-
-    public List<PacienteDto> buscarTodosPacientes() throws BusinessException{
-        try {
-
-            List<Paciente> pacientes = pacienteRepository.findAll();
-            return toDtoList(pacientes);
-
-        } catch (Exception e) {
-            throw new BusinessException("Não foi possível listar todos os restaurantes.");
-        }
-    }
-
-    @Transactional
-    public void salvarPaciente(PacienteDto pacienteDto) throws BusinessException{
-        Paciente paciente = toEntity(pacienteDto);
-        this.pacienteRepository.save(paciente);
-    }
-
-    @Transactional
-    public void alterarPaciente(PacienteDto pacienteDto) throws BusinessException {
-        Paciente pacienteExistente = pacienteRepository.findById(pacienteDto.getId())
-                .orElseThrow(() -> new BusinessException(String.format("Paciente com ID %d não encontrado para atualização.", pacienteDto.getId())));
-
-        pacienteRepository.updateById(
-                pacienteDto.getId(),
-                pacienteDto.getNome(),
-                pacienteDto.getCpf(),
-                pacienteDto.getDataNascimento(),
-                pacienteDto.getGenero().toString(),  // Se Genero for um Enum, converta para String
-                pacienteDto.getEndereco().getRua(),
-                pacienteDto.getEndereco().getCep(),
-                pacienteDto.getEndereco().getBairro(),
-                pacienteDto.getEndereco().getNumero(),
-                pacienteDto.getEndereco().getCidade(),
-                pacienteDto.getEndereco().getComplemento(),
-                pacienteDto.getContato().getTelefone(),
-                pacienteDto.getContato().getEmail()
-        );
-    }
-
-    @Transactional
-    public void deletarPaciente(Long idRestaurante) throws BusinessException{
-        Paciente paciente = pacienteRepository.findById(idRestaurante)
-                .orElseThrow(() -> new BusinessException("Paciente não encontrado"));
-
-        pacienteRepository.delete(paciente);
-    }
 }
