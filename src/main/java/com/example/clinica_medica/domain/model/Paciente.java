@@ -29,11 +29,11 @@ public class Paciente {
     @Enumerated(EnumType.STRING)
     private Genero genero;
 
-    @Embedded
-    private Endereco endereco;
+    @OneToMany(mappedBy = "paciente", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Endereco> enderecos;
 
-    @Embedded
-    private Contato contato;
+    @OneToMany(mappedBy = "paciente", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Contato> contatos;
 
     @OneToMany(mappedBy = "paciente", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<HistoricoMedico> historicoMedico;
