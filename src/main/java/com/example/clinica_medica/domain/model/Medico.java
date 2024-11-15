@@ -1,6 +1,7 @@
 package com.example.clinica_medica.domain.model;
 
 import com.example.clinica_medica.domain.enuns.Especializacao;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;

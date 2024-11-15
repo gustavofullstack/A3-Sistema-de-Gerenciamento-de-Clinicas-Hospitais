@@ -17,6 +17,9 @@ public class MedicoService {
     @Autowired
     private MedicoRepository medicoRepository;
 
+    @Autowired
+    private EnderecoService enderecoService;
+
     public MedicoDto consultarDadosMedicoPeloId(Long id){
 
         Medico medico = medicoRepository.findOneById(id);
@@ -36,9 +39,18 @@ public class MedicoService {
     }
 
     @Transactional
-    public void salvarMedico(MedicoDto medicoDto) throws BusinessException{
-        Medico medico = toEntity(medicoDto);
-        this.medicoRepository.save(medico);
+    public void cadastroCompleto(MedicoDto medicoDto) throws BusinessException{
+        try {
+
+            Medico medico = toEntity(medicoDto);
+            this.medicoRepository.save(medico);
+
+            medicoDto.setId(medico.getId());
+            enderecoService.salvarEndercoMedico(medicoDto);
+
+        } catch (BusinessException e){
+            throw new BusinessException(e.getMessage());
+        }
     }
 
     @Transactional
@@ -56,36 +68,35 @@ public class MedicoService {
         medicoRepository.delete(medico);
     }
 
-    public MedicoDto toDto(Medico medico) {
+    private MedicoDto toDto(Medico medico) {
         if (medico == null) {
             return null;
         }
 
         MedicoDto medicoDto = new MedicoDto();
         medicoDto.setId(medico.getId());
+        medicoDto.setCpf(medico.getCpf());
+        medicoDto.setDataNascimento(medico.getDataNascimento());
         medicoDto.setNome(medico.getNome());
         medicoDto.setNumeroRegistro(medico.getNumeroRegistro());
         medicoDto.setEspecializacao(medico.getEspecializacao());
-        medicoDto.setEnderecos(medico.getEnderecos());
-        medicoDto.setContatos(medico.getContatos());
         medicoDto.setConsultas(medico.getConsultas());
 
         return medicoDto;
     }
 
-    public Medico toEntity(MedicoDto medicoDto) {
+    private Medico toEntity(MedicoDto medicoDto) {
         if (medicoDto == null) {
             return null;
         }
 
         Medico medico = new Medico();
         medico.setId(medicoDto.getId());
+        medico.setCpf(medicoDto.getCpf());
         medico.setNome(medicoDto.getNome());
+        medico.setDataNascimento(medicoDto.getDataNascimento());
         medico.setNumeroRegistro(medicoDto.getNumeroRegistro());
         medico.setEspecializacao(medicoDto.getEspecializacao());
-        medico.setEnderecos(medicoDto.getEnderecos());
-        medico.setContatos(medicoDto.getContatos());
-        medico.setConsultas(medicoDto.getConsultas());
 
         return medico;
     }

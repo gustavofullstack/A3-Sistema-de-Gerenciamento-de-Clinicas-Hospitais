@@ -1,5 +1,6 @@
 package com.example.clinica_medica.domain.service;
 
+import com.example.clinica_medica.domain.dto.EnderecoDto;
 import com.example.clinica_medica.domain.dto.PacienteDto;
 import com.example.clinica_medica.domain.exception.BusinessException;
 import com.example.clinica_medica.domain.model.Paciente;
@@ -16,6 +17,9 @@ public class PacienteService {
 
     @Autowired
     private PacienteRepository pacienteRepository;
+
+    @Autowired
+    private EnderecoService enderecoService;
 
     public PacienteDto consultarDadosPacientePeloId(Long id){
 
@@ -36,9 +40,18 @@ public class PacienteService {
     }
 
     @Transactional
-    public void salvarPaciente(PacienteDto pacienteDto) throws BusinessException{
-        Paciente paciente = toEntity(pacienteDto);
-        this.pacienteRepository.save(paciente);
+    public void cadastroCompleto(PacienteDto pacienteDto) throws BusinessException{
+        try {
+
+            Paciente paciente = toEntity(pacienteDto);
+            this.pacienteRepository.save(paciente);
+
+            pacienteDto.setId(paciente.getId());
+            enderecoService.salvarEnderecoPaciente(pacienteDto);
+
+        } catch (BusinessException e){
+            throw  new BusinessException(e.getMessage());
+        }
     }
 
     @Transactional
@@ -56,7 +69,7 @@ public class PacienteService {
         pacienteRepository.delete(paciente);
     }
 
-    private PacienteDto toDto(Paciente paciente){
+    public PacienteDto toDto(Paciente paciente){
         try {
             if (paciente == null) {
                 throw new BusinessException("paciente não encontrado");
@@ -69,8 +82,6 @@ public class PacienteService {
             pacienteDto.setCpf(paciente.getCpf());
             pacienteDto.setDataNascimento(paciente.getDataNascimento());
             pacienteDto.setGenero(paciente.getGenero());
-            pacienteDto.setEnderecos(paciente.getEnderecos());
-            pacienteDto.setContatos(paciente.getContatos());
             pacienteDto.setConsultas(paciente.getConsultas());
             pacienteDto.setHistoricoMedico(paciente.getHistoricoMedico());
 
@@ -81,7 +92,7 @@ public class PacienteService {
         }
     }
 
-    private Paciente toEntity(PacienteDto pacienteDto) {
+    public Paciente toEntity(PacienteDto pacienteDto) {
         try {
 
             if (pacienteDto == null) {
@@ -93,8 +104,6 @@ public class PacienteService {
             paciente.setNome(pacienteDto.getNome());
             paciente.setCpf(pacienteDto.getCpf());
             paciente.setDataNascimento(pacienteDto.getDataNascimento());
-            paciente.setEnderecos(pacienteDto.getEnderecos());
-            paciente.setContatos(pacienteDto.getContatos());
             paciente.setConsultas(pacienteDto.getConsultas());
             paciente.setHistoricoMedico(pacienteDto.getHistoricoMedico());
             paciente.setGenero(pacienteDto.getGenero());

@@ -53,15 +53,15 @@ public class MedicoController {
         }
     }
 
-    @PostMapping("/salvar")
-    public ResponseEntity<Object> salvarMedico(@RequestBody MedicoDto medicoDto){
+    @PostMapping("/cadastroCompleto")
+    public ResponseEntity<Object> cadastroCompleto(@RequestBody MedicoDto medicoDto){
         try {
 
-            medicoService.salvarMedico(medicoDto);
+            medicoService.cadastroCompleto(medicoDto);
             return ResponseEntity.noContent().build();
 
         }catch (Exception e){
-            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(e.getMessage());
+            return ResponseEntity.unprocessableEntity().body(e.getMessage());
         }
     }
 

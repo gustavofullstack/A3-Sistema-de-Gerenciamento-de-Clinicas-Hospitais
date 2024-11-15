@@ -53,12 +53,12 @@ public class PacienteController {
         }
     }
 
-    @PostMapping("/salvar")
+    @PostMapping("/cadastroCompleto")
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<Object> salvarPaciente(@RequestBody PacienteDto pacienteDto){
+    public ResponseEntity<Object> cadastroCompleto(@RequestBody PacienteDto pacienteDto){
         try {
 
-            pacienteService.salvarPaciente(pacienteDto);
+            pacienteService.cadastroCompleto(pacienteDto);
             return ResponseEntity.noContent().build();
 
         }catch (Exception e){

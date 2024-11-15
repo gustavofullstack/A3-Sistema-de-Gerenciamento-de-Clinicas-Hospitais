@@ -22,8 +22,8 @@ public class PacienteDto {
     private String cpf;
     private Date dataNascimento;
     private Genero genero;
-    private List<Endereco> enderecos;
-    private List<Contato> contatos;
+    private List<EnderecoDto> enderecos;
+    private List<ContatoDto> contatos;
     private List<HistoricoMedico> historicoMedico;
     private List<Consulta> consultas;
 
