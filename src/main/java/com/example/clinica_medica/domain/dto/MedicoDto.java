@@ -19,6 +19,7 @@ public class MedicoDto {
 
     private Long id;
     private String nome;
+    private String cpf;
     private String numeroRegistro;
     private Date dataNascimento;
     private Genero genero;
