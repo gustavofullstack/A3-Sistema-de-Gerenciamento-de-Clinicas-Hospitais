@@ -19,8 +19,8 @@ public class MedicoDto {
     private String nome;
     private String numeroRegistro;
     private Especializacao especializacao;
-    private Endereco endereco;
-    private Contato contato;
+    private List<Endereco> enderecos;
+    private List<Contato> contatos;
     private List<Consulta> consultas;
 
 }

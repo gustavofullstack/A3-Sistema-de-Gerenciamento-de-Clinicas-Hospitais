@@ -25,11 +25,11 @@ public class Medico {
     @Enumerated(EnumType.STRING)
     private Especializacao especializacao;
 
-    @Embedded
-    private Endereco endereco;
+    @OneToMany(mappedBy = "medico", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Endereco> enderecos;
 
-    @Embedded
-    private Contato contato;
+    @OneToMany(mappedBy = "medico", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Contato> contatos;
 
     @OneToMany(mappedBy = "medico")
     private List<Consulta> consultas;

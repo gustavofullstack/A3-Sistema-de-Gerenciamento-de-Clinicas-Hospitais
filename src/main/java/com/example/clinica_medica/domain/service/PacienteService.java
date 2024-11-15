@@ -46,21 +46,6 @@ public class PacienteService {
         pacienteRepository.findById(pacienteDto.getId())
                 .orElseThrow(() -> new BusinessException(String.format("Paciente com ID %d não encontrado para atualização.", pacienteDto.getId())));
 
-        pacienteRepository.updateById(
-                pacienteDto.getId(),
-                pacienteDto.getNome(),
-                pacienteDto.getCpf(),
-                pacienteDto.getDataNascimento(),
-                pacienteDto.getGenero().toString(),
-                pacienteDto.getEndereco().getRua(),
-                pacienteDto.getEndereco().getCep(),
-                pacienteDto.getEndereco().getBairro(),
-                pacienteDto.getEndereco().getNumero(),
-                pacienteDto.getEndereco().getCidade(),
-                pacienteDto.getEndereco().getComplemento(),
-                pacienteDto.getContato().getTelefone(),
-                pacienteDto.getContato().getEmail()
-        );
     }
 
     @Transactional
@@ -83,12 +68,11 @@ public class PacienteService {
             pacienteDto.setNome(paciente.getNome());
             pacienteDto.setCpf(paciente.getCpf());
             pacienteDto.setDataNascimento(paciente.getDataNascimento());
-            pacienteDto.setEndereco(paciente.getEndereco());
-            pacienteDto.setContato(paciente.getContato());
+            pacienteDto.setGenero(paciente.getGenero());
+            pacienteDto.setEnderecos(paciente.getEnderecos());
+            pacienteDto.setContatos(paciente.getContatos());
             pacienteDto.setConsultas(paciente.getConsultas());
             pacienteDto.setHistoricoMedico(paciente.getHistoricoMedico());
-            pacienteDto.setGenero(paciente.getGenero());
-
 
             return pacienteDto;
 
@@ -109,8 +93,8 @@ public class PacienteService {
             paciente.setNome(pacienteDto.getNome());
             paciente.setCpf(pacienteDto.getCpf());
             paciente.setDataNascimento(pacienteDto.getDataNascimento());
-            paciente.setEndereco(pacienteDto.getEndereco());
-            paciente.setContato(pacienteDto.getContato());
+            paciente.setEnderecos(pacienteDto.getEnderecos());
+            paciente.setContatos(pacienteDto.getContatos());
             paciente.setConsultas(pacienteDto.getConsultas());
             paciente.setHistoricoMedico(pacienteDto.getHistoricoMedico());
             paciente.setGenero(pacienteDto.getGenero());

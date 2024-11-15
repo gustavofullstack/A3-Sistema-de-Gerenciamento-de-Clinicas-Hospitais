@@ -46,20 +46,6 @@ public class MedicoService {
         medicoRepository.findById(medicoDto.getId())
                 .orElseThrow(() -> new BusinessException(String.format("Médico com ID %d não encontrado para atualização.", medicoDto.getId())));
 
-        medicoRepository.updateById(
-                medicoDto.getId(),
-                medicoDto.getNome(),
-                medicoDto.getNumeroRegistro(),
-                medicoDto.getEspecializacao(),
-                medicoDto.getEndereco().getRua(),
-                medicoDto.getEndereco().getCep(),
-                medicoDto.getEndereco().getBairro(),
-                medicoDto.getEndereco().getNumero(),
-                medicoDto.getEndereco().getCidade(),
-                medicoDto.getEndereco().getComplemento(),
-                medicoDto.getContato().getTelefone(),
-                medicoDto.getContato().getEmail()
-        );
     }
 
     @Transactional
@@ -80,8 +66,8 @@ public class MedicoService {
         medicoDto.setNome(medico.getNome());
         medicoDto.setNumeroRegistro(medico.getNumeroRegistro());
         medicoDto.setEspecializacao(medico.getEspecializacao());
-        medicoDto.setEndereco(medico.getEndereco());
-        medicoDto.setContato(medico.getContato());
+        medicoDto.setEnderecos(medico.getEnderecos());
+        medicoDto.setContatos(medico.getContatos());
         medicoDto.setConsultas(medico.getConsultas());
 
         return medicoDto;
@@ -97,8 +83,8 @@ public class MedicoService {
         medico.setNome(medicoDto.getNome());
         medico.setNumeroRegistro(medicoDto.getNumeroRegistro());
         medico.setEspecializacao(medicoDto.getEspecializacao());
-        medico.setEndereco(medicoDto.getEndereco());
-        medico.setContato(medicoDto.getContato());
+        medico.setEnderecos(medicoDto.getEnderecos());
+        medico.setContatos(medicoDto.getContatos());
         medico.setConsultas(medicoDto.getConsultas());
 
         return medico;
