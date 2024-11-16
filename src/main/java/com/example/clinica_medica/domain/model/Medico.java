@@ -1,6 +1,7 @@
 package com.example.clinica_medica.domain.model;
 
 import com.example.clinica_medica.domain.enuns.Especializacao;
+import com.example.clinica_medica.domain.enuns.Genero;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;
@@ -39,6 +40,9 @@ public class Medico {
 
     @Enumerated(EnumType.STRING)
     private Especializacao especializacao;
+
+    @Enumerated(EnumType.STRING)
+    private Genero genero;
 
     @OneToMany(mappedBy = "medico", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Endereco> enderecos;

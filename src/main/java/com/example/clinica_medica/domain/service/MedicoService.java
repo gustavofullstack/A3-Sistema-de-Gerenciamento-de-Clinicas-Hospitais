@@ -3,6 +3,7 @@ package com.example.clinica_medica.domain.service;
 import com.example.clinica_medica.domain.dto.ContatoDto;
 import com.example.clinica_medica.domain.dto.EnderecoDto;
 import com.example.clinica_medica.domain.dto.MedicoDto;
+import com.example.clinica_medica.domain.dto.MedicoSimplificadoDto;
 import com.example.clinica_medica.domain.exception.BusinessException;
 import com.example.clinica_medica.domain.model.Medico;
 import com.example.clinica_medica.domain.repository.MedicoRepository;
@@ -40,11 +41,11 @@ public class MedicoService {
         return medicoDto;
     }
 
-    public List<MedicoDto> buscarTodosMedicos() throws BusinessException{
+    public List<MedicoSimplificadoDto> buscarTodosMedicos() throws BusinessException{
         try {
 
             List<Medico> medicos = medicoRepository.findAll();
-            return toDtoList(medicos);
+            return toDtoListSimplificado(medicos);
 
         } catch (Exception e) {
             throw new BusinessException("Não foi possível listar todos os restaurantes.");
@@ -72,6 +73,8 @@ public class MedicoService {
         medicoRepository.findById(medicoDto.getId())
                 .orElseThrow(() -> new BusinessException(String.format("Médico com ID %d não encontrado para atualização.", medicoDto.getId())));
 
+        medicoRepository.updateById(medicoDto.getId(), medicoDto.getDataNascimento(), medicoDto.getCpf(), medicoDto.getNome(),
+                medicoDto.getGenero().toString(), medicoDto.getNumeroRegistro(), medicoDto.getEspecializacao().toString());
     }
 
     @Transactional
@@ -84,13 +87,14 @@ public class MedicoService {
 
     private MedicoDto toDto(Medico medico) {
         if (medico == null) {
-            return null;
+            throw new BusinessException("Medico não encontrado");
         }
 
         MedicoDto medicoDto = new MedicoDto();
         medicoDto.setId(medico.getId());
         medicoDto.setCpf(medico.getCpf());
         medicoDto.setDataNascimento(medico.getDataNascimento());
+        medicoDto.setGenero(medico.getGenero());
         medicoDto.setNome(medico.getNome());
         medicoDto.setNumeroRegistro(medico.getNumeroRegistro());
         medicoDto.setEspecializacao(medico.getEspecializacao());
@@ -99,15 +103,34 @@ public class MedicoService {
         return medicoDto;
     }
 
+    private MedicoSimplificadoDto toDtoSimplificado(Medico medico) {
+        if (medico == null) {
+            throw new BusinessException("Medico não encontrado");
+        }
+
+        MedicoSimplificadoDto medicoDto = new MedicoSimplificadoDto();
+
+        medicoDto.setId(medico.getId());
+        medicoDto.setCpf(medico.getCpf());
+        medicoDto.setDataNascimento(medico.getDataNascimento());
+        medicoDto.setGenero(medico.getGenero());
+        medicoDto.setNome(medico.getNome());
+        medicoDto.setNumeroRegistro(medico.getNumeroRegistro());
+        medicoDto.setEspecializacao(medico.getEspecializacao());
+
+        return medicoDto;
+    }
+
     private Medico toEntity(MedicoDto medicoDto) {
         if (medicoDto == null) {
-            return null;
+            throw new BusinessException("Medico não encontrado");
         }
 
         Medico medico = new Medico();
         medico.setId(medicoDto.getId());
         medico.setCpf(medicoDto.getCpf());
         medico.setNome(medicoDto.getNome());
+        medico.setGenero(medicoDto.getGenero());
         medico.setDataNascimento(medicoDto.getDataNascimento());
         medico.setNumeroRegistro(medicoDto.getNumeroRegistro());
         medico.setEspecializacao(medicoDto.getEspecializacao());
@@ -119,6 +142,14 @@ public class MedicoService {
 
         return medicos.stream()
                 .map(this::toDto)
+                .collect(Collectors.toList());
+
+    }
+
+    private List<MedicoSimplificadoDto> toDtoListSimplificado(List<Medico> medicos) {
+
+        return medicos.stream()
+                .map(this::toDtoSimplificado)
                 .collect(Collectors.toList());
 
     }

@@ -1,6 +1,7 @@
 package com.example.clinica_medica.controller;
 
 import com.example.clinica_medica.domain.dto.MedicoDto;
+import com.example.clinica_medica.domain.dto.MedicoSimplificadoDto;
 import com.example.clinica_medica.domain.service.MedicoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +23,7 @@ public class MedicoController {
     public ResponseEntity<List<Object>> buscarTodosMedicos(){
         try{
 
-            List<MedicoDto> medicos = medicoService.buscarTodosMedicos();
+            List<MedicoSimplificadoDto> medicos = medicoService.buscarTodosMedicos();
 
             if (medicos.isEmpty()){
                 throw new Exception("Não existe medicos!");

@@ -1,6 +1,7 @@
 package com.example.clinica_medica.controller;
 
 import com.example.clinica_medica.domain.dto.PacienteDto;
+import com.example.clinica_medica.domain.dto.PacienteSimplificadoDto;
 import com.example.clinica_medica.domain.service.PacienteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,7 +24,7 @@ public class PacienteController {
     public ResponseEntity<List<Object>> buscarTodosPacientes(){
         try{
 
-            List<PacienteDto> paciente = pacienteService.buscarTodosPacientes();
+            List<PacienteSimplificadoDto> paciente = pacienteService.buscarTodosPacientes();
 
             if (paciente.isEmpty()){
                 throw new Exception("Não existe paciente!");
@@ -67,7 +68,7 @@ public class PacienteController {
     }
 
     @PutMapping("/alterar-id/{idPaciente}")
-    public ResponseEntity<Object> updatePaciente(@RequestBody PacienteDto pacienteDto, @PathVariable("idPaciente") Long id){
+    public ResponseEntity<Object> updatePaciente(@RequestBody PacienteSimplificadoDto pacienteDto, @PathVariable("idPaciente") Long id){
         try {
 
             pacienteDto.setId(id);
