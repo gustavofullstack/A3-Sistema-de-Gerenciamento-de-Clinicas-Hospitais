@@ -19,7 +19,7 @@ public class PacienteController {
     @Autowired
     private PacienteService pacienteService;
 
-    @GetMapping("/todos")
+    @GetMapping("/buscar-todos")
     public ResponseEntity<List<Object>> buscarTodosPacientes(){
         try{
 
@@ -36,7 +36,7 @@ public class PacienteController {
         }
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/buscar-id/{id}")
     public ResponseEntity<Object> consultarTodosDadosPacientesPeloId(@PathVariable Long id) {
         try {
 
@@ -53,7 +53,7 @@ public class PacienteController {
         }
     }
 
-    @PostMapping("/cadastroCompleto")
+    @PostMapping("/cadastro-completo")
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<Object> cadastroCompleto(@RequestBody PacienteDto pacienteDto){
         try {
@@ -66,7 +66,7 @@ public class PacienteController {
         }
     }
 
-    @PutMapping("/{idPaciente}")
+    @PutMapping("/alterar-id/{idPaciente}")
     public ResponseEntity<Object> updatePaciente(@RequestBody PacienteDto pacienteDto, @PathVariable("idPaciente") Long id){
         try {
 
@@ -79,7 +79,7 @@ public class PacienteController {
         }
     }
 
-    @DeleteMapping("/{idPaciente}")
+    @DeleteMapping("/deletar-id/{idPaciente}")
     public ResponseEntity<Object> deletarPaciente(@PathVariable("idPaciente") Long id){
         try {
 

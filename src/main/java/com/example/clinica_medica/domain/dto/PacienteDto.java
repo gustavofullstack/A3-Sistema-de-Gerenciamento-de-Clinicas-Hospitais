@@ -2,8 +2,6 @@ package com.example.clinica_medica.domain.dto;
 
 import com.example.clinica_medica.domain.enuns.Genero;
 import com.example.clinica_medica.domain.model.Consulta;
-import com.example.clinica_medica.domain.model.Contato;
-import com.example.clinica_medica.domain.model.Endereco;
 import com.example.clinica_medica.domain.model.HistoricoMedico;
 import lombok.AllArgsConstructor;
 import lombok.Data;

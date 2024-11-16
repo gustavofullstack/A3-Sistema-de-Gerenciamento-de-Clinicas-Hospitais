@@ -20,6 +20,9 @@ public class MedicoService {
     @Autowired
     private EnderecoService enderecoService;
 
+    @Autowired
+    private ContatoService contatoService;
+
     public MedicoDto consultarDadosMedicoPeloId(Long id){
 
         Medico medico = medicoRepository.findOneById(id);
@@ -47,6 +50,7 @@ public class MedicoService {
 
             medicoDto.setId(medico.getId());
             enderecoService.salvarEndercoMedico(medicoDto);
+            contatoService.salvarContatoMedico(medicoDto);
 
         } catch (BusinessException e){
             throw new BusinessException(e.getMessage());

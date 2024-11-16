@@ -3,7 +3,6 @@ package com.example.clinica_medica.controller;
 import com.example.clinica_medica.domain.dto.MedicoDto;
 import com.example.clinica_medica.domain.service.MedicoService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +18,7 @@ public class MedicoController {
     @Autowired
     private MedicoService medicoService;
 
-    @GetMapping("/todos")
+    @GetMapping("/buscar-todos")
     public ResponseEntity<List<Object>> buscarTodosMedicos(){
         try{
 
@@ -36,7 +35,7 @@ public class MedicoController {
         }
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/buscar-id/{id}")
     public ResponseEntity<Object> consultarDadosBasicosPacientePeloId(@PathVariable Long id) {
         try {
 
@@ -53,7 +52,7 @@ public class MedicoController {
         }
     }
 
-    @PostMapping("/cadastroCompleto")
+    @PostMapping("/cadastro-completo")
     public ResponseEntity<Object> cadastroCompleto(@RequestBody MedicoDto medicoDto){
         try {
 
@@ -65,8 +64,8 @@ public class MedicoController {
         }
     }
 
-    @PutMapping("/{idMedico}")
-    public ResponseEntity<Object> updateMedico(@RequestBody MedicoDto medicoDto, @PathVariable("idMedico") Long id){
+    @PutMapping("/alterar-id/{id}")
+    public ResponseEntity<Object> updateMedico(@RequestBody MedicoDto medicoDto, @PathVariable("id") Long id){
         try {
 
             medicoDto.setId(id);
@@ -78,8 +77,8 @@ public class MedicoController {
         }
     }
 
-    @DeleteMapping("/{idMedico}")
-    public ResponseEntity<Object> deletarMedico(@PathVariable("idMedico") Long id){
+    @DeleteMapping("/deletar-id/{id}")
+    public ResponseEntity<Object> deletarMedico(@PathVariable("id") Long id){
         try {
 
             medicoService.deletarMedico(id);

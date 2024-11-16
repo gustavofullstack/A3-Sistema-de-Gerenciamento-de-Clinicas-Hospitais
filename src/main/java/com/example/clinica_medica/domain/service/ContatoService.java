@@ -3,9 +3,14 @@ package com.example.clinica_medica.domain.service;
 import com.example.clinica_medica.domain.dto.ContatoDto;
 import com.example.clinica_medica.domain.dto.MedicoDto;
 import com.example.clinica_medica.domain.dto.PacienteDto;
+import com.example.clinica_medica.domain.exception.BusinessException;
 import com.example.clinica_medica.domain.model.Contato;
 import com.example.clinica_medica.domain.model.Medico;
 import com.example.clinica_medica.domain.model.Paciente;
+import com.example.clinica_medica.domain.repository.ContatoRepository;
+import com.example.clinica_medica.domain.repository.MedicoRepository;
+import com.example.clinica_medica.domain.repository.PacienteRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,6 +18,64 @@ import java.util.stream.Collectors;
 
 @Service
 public class ContatoService {
+
+    @Autowired
+    private ContatoRepository contatoRepository;
+
+    @Autowired
+    private PacienteRepository pacienteRepository;
+
+    @Autowired
+    private MedicoRepository medicoRepository;
+
+    public void salvarContatoPaciente(PacienteDto pacienteDto) throws BusinessException {
+        try {
+
+            List<ContatoDto> listaContato = relacionaContatoMedico(pacienteDto);
+            List<Contato> listaContatoPaciente = toEntityList(listaContato);
+
+            for (Contato contato : listaContatoPaciente){
+                contatoRepository.save(contato);
+            }
+
+        } catch (BusinessException e){
+            throw new BusinessException("Não foi possivel salvar o contato do medico");
+        }
+    }
+
+    public void salvarContatoMedico(MedicoDto medicoDto) throws BusinessException {
+        try {
+
+            List<ContatoDto> listaContato = relacionaContatoMedico(medicoDto);
+            List<Contato> listaContatoMedico = toEntityList(listaContato);
+
+            for (Contato contato : listaContatoMedico){
+                contatoRepository.save(contato);
+            }
+
+        } catch (BusinessException e){
+            throw new BusinessException("Não foi possivel salvar o contato do medico");
+        }
+    }
+
+    private List<ContatoDto> relacionaContatoMedico(MedicoDto medicoDto){
+
+        List<ContatoDto> listaContato = medicoDto.getContatos();
+        for(ContatoDto contatoDto : listaContato){
+            contatoDto.setMedico(toMedicoDto(medicoRepository.findOneById(medicoDto.getId())));
+        }
+        return listaContato;
+    }
+
+    private List<ContatoDto> relacionaContatoMedico(PacienteDto pacienteDto){
+
+        List<ContatoDto> listaContato = pacienteDto.getContatos();
+        for(ContatoDto contatoDto : listaContato){
+            contatoDto.setPaciente(toPacienteDto(pacienteRepository.findOneById(pacienteDto.getId())));
+        }
+        return listaContato;
+
+    }
 
     private ContatoDto toDto(Contato contato) {
         if (contato == null) {
@@ -87,6 +150,12 @@ public class ContatoService {
     private List<ContatoDto> toDtoList(List<Contato> contatos) {
         return contatos.stream()
                 .map(this::toDto)
+                .collect(Collectors.toList());
+    }
+
+    private List<Contato> toEntityList(List<ContatoDto> contatos) {
+        return contatos.stream()
+                .map(this::toEntity)
                 .collect(Collectors.toList());
     }
 }

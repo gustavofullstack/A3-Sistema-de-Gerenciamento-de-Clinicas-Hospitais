@@ -1,6 +1,5 @@
 package com.example.clinica_medica.domain.service;
 
-import com.example.clinica_medica.domain.dto.EnderecoDto;
 import com.example.clinica_medica.domain.dto.PacienteDto;
 import com.example.clinica_medica.domain.exception.BusinessException;
 import com.example.clinica_medica.domain.model.Paciente;
@@ -20,6 +19,9 @@ public class PacienteService {
 
     @Autowired
     private EnderecoService enderecoService;
+
+    @Autowired
+    private ContatoService contatoService;
 
     public PacienteDto consultarDadosPacientePeloId(Long id){
 
@@ -48,6 +50,7 @@ public class PacienteService {
 
             pacienteDto.setId(paciente.getId());
             enderecoService.salvarEnderecoPaciente(pacienteDto);
+            contatoService.salvarContatoPaciente(pacienteDto);
 
         } catch (BusinessException e){
             throw  new BusinessException(e.getMessage());
