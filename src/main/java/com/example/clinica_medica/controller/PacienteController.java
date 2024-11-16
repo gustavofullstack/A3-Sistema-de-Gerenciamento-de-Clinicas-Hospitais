@@ -1,7 +1,9 @@
 package com.example.clinica_medica.controller;
 
+import com.example.clinica_medica.domain.dto.EnderecoDto;
 import com.example.clinica_medica.domain.dto.PacienteDto;
 import com.example.clinica_medica.domain.dto.PacienteSimplificadoDto;
+import com.example.clinica_medica.domain.exception.BusinessException;
 import com.example.clinica_medica.domain.service.PacienteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -89,6 +91,22 @@ public class PacienteController {
 
         }catch (Exception e){
             return ResponseEntity.unprocessableEntity().body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/buscar-endereco/{id}")
+    public ResponseEntity<List<Object>> consultarEnderecoPeloIdPaciente(@PathVariable("id") Long id){
+        try {
+
+            List<EnderecoDto> enderecoPaciente = pacienteService.consultarEnderecoPaciente(id);
+
+            if(enderecoPaciente.isEmpty()){
+                throw new BusinessException("Endereço não encontrado para o paciente");
+            }
+            return ResponseEntity.ok().body(Collections.singletonList(enderecoPaciente));
+
+        } catch (Exception e){
+            return ResponseEntity.internalServerError().body(Collections.singletonList(e.getMessage()));
         }
     }
 

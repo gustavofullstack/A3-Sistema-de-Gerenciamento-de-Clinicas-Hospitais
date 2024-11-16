@@ -26,6 +26,16 @@ public class PacienteService {
     @Autowired
     private ContatoService contatoService;
 
+    public List<EnderecoDto> consultarEnderecoPaciente(Long id){
+        try {
+
+            return enderecoService.buscarEnderecoPeloIdPaciente(id);
+
+        } catch (BusinessException e){
+            throw new BusinessException("Não foi possivel consultar o endereço do medico");
+        }
+    }
+
     public PacienteDto consultarDadosPacientePeloId(Long id){
 
         Paciente paciente = pacienteRepository.findOneById(id);
