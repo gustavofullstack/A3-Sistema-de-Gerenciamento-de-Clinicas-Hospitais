@@ -11,6 +11,7 @@ import com.example.clinica_medica.domain.repository.EnderecoRepository;
 import com.example.clinica_medica.domain.repository.MedicoRepository;
 import com.example.clinica_medica.domain.repository.PacienteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -27,6 +28,28 @@ public class EnderecoService {
 
     @Autowired
     private PacienteRepository pacienteRepository;
+
+    public void alterarEnderecoIdMedico(EnderecoDto enderecoDto, Long idMedico) throws BusinessException {
+        try {
+
+            enderecoRepository.updateByMedicoId(idMedico, enderecoDto.getBairro(), enderecoDto.getCep(),
+                    enderecoDto.getCidade(), enderecoDto.getComplemento(), enderecoDto.getNumero(), enderecoDto.getRua());
+
+        } catch (BusinessException e){
+            throw new BusinessException("Não foi possivel alterar o endereço do medico");
+        }
+    }
+
+    public void alterarEnderecoIdPaciente(EnderecoDto enderecoDto, Long idPaciente) throws BusinessException {
+        try {
+
+            enderecoRepository.updateByPacienteId(idPaciente, enderecoDto.getBairro(), enderecoDto.getCep(),
+                    enderecoDto.getCidade(), enderecoDto.getComplemento(), enderecoDto.getNumero(), enderecoDto.getRua());
+
+        } catch (BusinessException e){
+            throw new BusinessException("Não foi possivel alterar o endereço do medico");
+        }
+    }
 
     public List<EnderecoDto> buscarEnderecoPeloIdPaciente(Long idPaciente){
         try {

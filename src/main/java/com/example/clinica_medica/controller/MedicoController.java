@@ -109,6 +109,18 @@ public class MedicoController {
         }
     }
 
+    @PutMapping("/alterar-endereco/{id}")
+    public ResponseEntity<Object> updateEnderecoMedico(@RequestBody EnderecoDto enderecoDto, @PathVariable("id") Long idMedico){
+        try {
+
+            medicoService.alterarEnderecoMedico(enderecoDto, idMedico);
+            return ResponseEntity.noContent().build();
+
+        }catch (Exception e){
+            return ResponseEntity.unprocessableEntity().body(e.getMessage());
+        }
+    }
+
     @GetMapping("/buscar-contatos/{id}")
     public ResponseEntity<List<Object>> consultarContatosPeloIdPaciente(@PathVariable("id") Long id){
         try {

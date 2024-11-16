@@ -5,6 +5,7 @@ import com.example.clinica_medica.domain.dto.EnderecoDto;
 import com.example.clinica_medica.domain.dto.PacienteDto;
 import com.example.clinica_medica.domain.dto.PacienteSimplificadoDto;
 import com.example.clinica_medica.domain.exception.BusinessException;
+import com.example.clinica_medica.domain.model.Endereco;
 import com.example.clinica_medica.domain.model.Paciente;
 import com.example.clinica_medica.domain.repository.PacienteRepository;
 import jakarta.transaction.Transactional;
@@ -25,6 +26,16 @@ public class PacienteService {
 
     @Autowired
     private ContatoService contatoService;
+
+    public void alterarEnderecoPaciente(EnderecoDto enderecoDto, Long idPaciente){
+        try {
+
+            enderecoService.alterarEnderecoIdPaciente(enderecoDto, idPaciente);
+
+        } catch (BusinessException e){
+            throw new BusinessException("Não foi possivel consultar os contatos do paciente");
+        }
+    }
 
     public List<ContatoDto> consultarContatosPeloIdPaciente(Long id){
         try {

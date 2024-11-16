@@ -46,6 +46,16 @@ public class MedicoService {
         }
     }
 
+    public void alterarEnderecoMedico(EnderecoDto enderecoDto, Long idMedico){
+        try {
+
+            enderecoService.alterarEnderecoIdMedico(enderecoDto, idMedico);
+
+        } catch (BusinessException e){
+            throw new BusinessException(e.getMessage());
+        }
+    }
+
     public MedicoDto consultarDadosMedicoPeloId(Long id){
 
         Medico medico = medicoRepository.findOneById(id);
