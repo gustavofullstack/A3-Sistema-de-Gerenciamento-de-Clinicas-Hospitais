@@ -26,13 +26,23 @@ public class MedicoService {
     @Autowired
     private ContatoService contatoService;
 
+    public List<ContatoDto> consultarContatosPeloIdMedico(Long id){
+        try {
+
+            return contatoService.buscarContatoPeloIdMedico(id);
+
+        } catch (BusinessException e){
+            throw new BusinessException("Não foi possivel consultar os contatos do medico");
+        }
+    }
+
     public List<EnderecoDto> consultarEnderecoMedico(Long id){
         try {
 
             return enderecoService.buscarEnderecoPeloIdMedico(id);
 
         } catch (BusinessException e){
-            throw new BusinessException("Não foi possivel consultar o endereço do medico");
+            throw new BusinessException("Não foi possivel consultar os endereços do medico");
         }
     }
 

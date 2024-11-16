@@ -1,5 +1,6 @@
 package com.example.clinica_medica.controller;
 
+import com.example.clinica_medica.domain.dto.ContatoDto;
 import com.example.clinica_medica.domain.dto.EnderecoDto;
 import com.example.clinica_medica.domain.dto.MedicoDto;
 import com.example.clinica_medica.domain.dto.MedicoSimplificadoDto;
@@ -92,7 +93,7 @@ public class MedicoController {
         }
     }
 
-    @GetMapping("/buscar-endereco/{id}")
+    @GetMapping("/buscar-enderecos/{id}")
     public ResponseEntity<List<Object>> consultarEnderecoPeloIdMedico(@PathVariable("id") Long id){
         try {
 
@@ -102,6 +103,22 @@ public class MedicoController {
                 throw new BusinessException("Endereço não encontrado para o medico");
             }
             return ResponseEntity.ok().body(Collections.singletonList(enderecoMedico));
+
+        } catch (Exception e){
+            return ResponseEntity.internalServerError().body(Collections.singletonList(e.getMessage()));
+        }
+    }
+
+    @GetMapping("/buscar-contatos/{id}")
+    public ResponseEntity<List<Object>> consultarContatosPeloIdPaciente(@PathVariable("id") Long id){
+        try {
+
+            List<ContatoDto> contatosPaciente = medicoService.consultarContatosPeloIdMedico(id);
+
+            if(contatosPaciente.isEmpty()){
+                throw new BusinessException("Nenhum contato encontrado para o medico");
+            }
+            return ResponseEntity.ok().body(Collections.singletonList(contatosPaciente));
 
         } catch (Exception e){
             return ResponseEntity.internalServerError().body(Collections.singletonList(e.getMessage()));

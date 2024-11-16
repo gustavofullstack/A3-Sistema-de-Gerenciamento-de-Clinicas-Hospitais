@@ -1,5 +1,6 @@
 package com.example.clinica_medica.controller;
 
+import com.example.clinica_medica.domain.dto.ContatoDto;
 import com.example.clinica_medica.domain.dto.EnderecoDto;
 import com.example.clinica_medica.domain.dto.PacienteDto;
 import com.example.clinica_medica.domain.dto.PacienteSimplificadoDto;
@@ -94,16 +95,32 @@ public class PacienteController {
         }
     }
 
-    @GetMapping("/buscar-endereco/{id}")
-    public ResponseEntity<List<Object>> consultarEnderecoPeloIdPaciente(@PathVariable("id") Long id){
+    @GetMapping("/buscar-enderecos/{id}")
+    public ResponseEntity<List<Object>> consultarEnderecosPeloIdPaciente(@PathVariable("id") Long id){
         try {
 
-            List<EnderecoDto> enderecoPaciente = pacienteService.consultarEnderecoPaciente(id);
+            List<EnderecoDto> enderecosPaciente = pacienteService.consultarEnderecosPaciente(id);
 
-            if(enderecoPaciente.isEmpty()){
-                throw new BusinessException("Endereço não encontrado para o paciente");
+            if(enderecosPaciente.isEmpty()){
+                throw new BusinessException("Nenhum endereço encontrado para o paciente");
             }
-            return ResponseEntity.ok().body(Collections.singletonList(enderecoPaciente));
+            return ResponseEntity.ok().body(Collections.singletonList(enderecosPaciente));
+
+        } catch (Exception e){
+            return ResponseEntity.internalServerError().body(Collections.singletonList(e.getMessage()));
+        }
+    }
+
+    @GetMapping("/buscar-contatos/{id}")
+    public ResponseEntity<List<Object>> consultarContatosPeloIdPaciente(@PathVariable("id") Long id){
+        try {
+
+            List<ContatoDto> contatosPaciente = pacienteService.consultarContatosPeloIdPaciente(id);
+
+            if(contatosPaciente.isEmpty()){
+                throw new BusinessException("Nenhum contato encontrado para o paciente");
+            }
+            return ResponseEntity.ok().body(Collections.singletonList(contatosPaciente));
 
         } catch (Exception e){
             return ResponseEntity.internalServerError().body(Collections.singletonList(e.getMessage()));
