@@ -5,8 +5,6 @@ import com.example.clinica_medica.domain.dto.MedicoDto;
 import com.example.clinica_medica.domain.dto.PacienteDto;
 import com.example.clinica_medica.domain.exception.BusinessException;
 import com.example.clinica_medica.domain.model.Contato;
-import com.example.clinica_medica.domain.model.Medico;
-import com.example.clinica_medica.domain.model.Paciente;
 import com.example.clinica_medica.domain.repository.ContatoRepository;
 import com.example.clinica_medica.domain.repository.MedicoRepository;
 import com.example.clinica_medica.domain.repository.PacienteRepository;

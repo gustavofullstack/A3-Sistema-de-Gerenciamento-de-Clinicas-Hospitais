@@ -5,13 +5,10 @@ import com.example.clinica_medica.domain.dto.MedicoDto;
 import com.example.clinica_medica.domain.dto.PacienteDto;
 import com.example.clinica_medica.domain.exception.BusinessException;
 import com.example.clinica_medica.domain.model.Endereco;
-import com.example.clinica_medica.domain.model.Medico;
-import com.example.clinica_medica.domain.model.Paciente;
 import com.example.clinica_medica.domain.repository.EnderecoRepository;
 import com.example.clinica_medica.domain.repository.MedicoRepository;
 import com.example.clinica_medica.domain.repository.PacienteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -85,7 +82,7 @@ public class EnderecoService {
 
         } catch (BusinessException e){
             throw new BusinessException("Não foi possivel salvar o endereço do medico");
-            }
+        }
     }
 
     public void salvarEnderecoPaciente(PacienteDto pacienteDto) throws BusinessException {

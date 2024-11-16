@@ -77,7 +77,6 @@ public class MedicoService {
         medicoDto.setEnderecos(listaEnderecoMedico);
         medicoDto.setContatos(listaContatoMedico);
 
-
         return medicoDto;
     }
 
