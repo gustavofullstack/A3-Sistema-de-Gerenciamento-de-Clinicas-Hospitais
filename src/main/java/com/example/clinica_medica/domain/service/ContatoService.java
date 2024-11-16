@@ -50,6 +50,26 @@ public class ContatoService {
         }
     }
 
+    public void alterarContatoIdMedico(ContatoDto contatoDto, Long idMedico){
+        try {
+
+            contatoRepository.updateByIdMedico(idMedico, contatoDto.getEmail(), contatoDto.getTelefone());
+
+        } catch (BusinessException e){
+            throw new BusinessException("Não foi possivel resgatar os contatos do medico");
+        }
+    }
+
+    public void alterarContatoIdPaciente(ContatoDto contatoDto, Long idPaciente){
+        try {
+
+            contatoRepository.updateByIdPaciente(idPaciente, contatoDto.getEmail(), contatoDto.getTelefone());
+
+        } catch (BusinessException e){
+            throw new BusinessException("Não foi possivel resgatar os contatos do medico");
+        }
+    }
+
     public void salvarContatoPaciente(PacienteDto pacienteDto) throws BusinessException {
         try {
 
@@ -105,46 +125,6 @@ public class ContatoService {
         contato.setEmail(contatoDto.getEmail());
 
         return contato;
-    }
-
-    private Paciente toPacienteEntity(PacienteDto pacienteDto) {
-        if (pacienteDto == null) {
-            return null;
-        }
-        Paciente paciente = new Paciente();
-        paciente.setId(pacienteDto.getId());
-        paciente.setNome(pacienteDto.getNome());
-        return paciente;
-    }
-
-    private Medico toMedicoEntity(MedicoDto medicoDto) {
-        if (medicoDto == null) {
-            return null;
-        }
-        Medico medico = new Medico();
-        medico.setId(medicoDto.getId());
-        medico.setNome(medicoDto.getNome());
-        return medico;
-    }
-
-    private PacienteDto toPacienteDto(Paciente paciente) {
-        if (paciente == null) {
-            return null;
-        }
-        PacienteDto pacienteDto = new PacienteDto();
-        pacienteDto.setId(paciente.getId());
-        pacienteDto.setNome(paciente.getNome());
-        return pacienteDto;
-    }
-
-    private MedicoDto toMedicoDto(Medico medico) {
-        if (medico == null) {
-            return null;
-        }
-        MedicoDto medicoDto = new MedicoDto();
-        medicoDto.setId(medico.getId());
-        medicoDto.setNome(medico.getNome());
-        return medicoDto;
     }
 
     private List<ContatoDto> toDtoList(List<Contato> contatos) {

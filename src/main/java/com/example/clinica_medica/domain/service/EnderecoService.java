@@ -121,27 +121,6 @@ public class EnderecoService {
         return enderecoDto;
     }
 
-    private PacienteDto toPacienteDto(Paciente paciente) {
-        if (paciente == null) {
-            return null;
-        }
-        PacienteDto pacienteDto = new PacienteDto();
-        pacienteDto.setId(paciente.getId());
-        pacienteDto.setNome(paciente.getNome());
-        return pacienteDto;
-    }
-
-    private MedicoDto toMedicoDto(Medico medico) {
-        if (medico == null) {
-            return null;
-        }
-        MedicoDto medicoDto = new MedicoDto();
-        medicoDto.setId(medico.getId());
-        medicoDto.setNome(medico.getNome());
-        medicoDto.setNumeroRegistro(medico.getNumeroRegistro());
-        return medicoDto;
-    }
-
     private Endereco toEntity(EnderecoDto enderecoDto) {
         if (enderecoDto == null) {
             return null;
@@ -159,28 +138,6 @@ public class EnderecoService {
 
         return endereco;
     }
-
-    private Paciente toPacienteEntity(PacienteDto pacienteDto) {
-        if (pacienteDto == null) {
-            return null;
-        }
-        Paciente paciente = new Paciente();
-        paciente.setId(pacienteDto.getId());
-        paciente.setNome(pacienteDto.getNome());
-        return paciente;
-    }
-
-    private Medico toMedicoEntity(MedicoDto medicoDto) {
-        if (medicoDto == null) {
-            return null;
-        }
-        Medico medico = new Medico();
-        medico.setId(medicoDto.getId());
-        medico.setNome(medicoDto.getNome());
-        medico.setNumeroRegistro(medicoDto.getNumeroRegistro());
-        return medico;
-    }
-
 
     private List<EnderecoDto> toDtoList(List<Endereco> enderecos) {
         return enderecos.stream()

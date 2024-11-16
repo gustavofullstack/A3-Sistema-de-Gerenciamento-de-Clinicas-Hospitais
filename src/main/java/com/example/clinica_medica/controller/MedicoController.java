@@ -137,4 +137,16 @@ public class MedicoController {
         }
     }
 
+    @PutMapping("/alterar-contato/{id}")
+    public ResponseEntity<Object> updateContatoMedico(@RequestBody ContatoDto contatoDto, @PathVariable("id") Long idMedico){
+        try {
+
+            medicoService.alterarContatoIdMedico(contatoDto, idMedico);
+            return ResponseEntity.noContent().build();
+
+        }catch (Exception e){
+            return ResponseEntity.unprocessableEntity().body(e.getMessage());
+        }
+    }
+
 }

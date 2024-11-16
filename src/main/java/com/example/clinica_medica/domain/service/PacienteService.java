@@ -37,6 +37,16 @@ public class PacienteService {
         }
     }
 
+    public void alterarContatoIdPaciente(ContatoDto contatoDto, Long idPaciente){
+        try {
+
+            contatoService.alterarContatoIdPaciente(contatoDto, idPaciente);
+
+        } catch (BusinessException e){
+            throw new BusinessException(e.getMessage());
+        }
+    }
+
     public List<ContatoDto> consultarContatosPeloIdPaciente(Long id){
         try {
 

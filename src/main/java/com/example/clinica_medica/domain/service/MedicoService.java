@@ -36,6 +36,16 @@ public class MedicoService {
         }
     }
 
+    public void alterarContatoIdMedico(ContatoDto contatoDto, Long idMedico){
+        try {
+
+            contatoService.alterarContatoIdMedico(contatoDto, idMedico);
+
+        } catch (BusinessException e){
+            throw new BusinessException(e.getMessage());
+        }
+    }
+
     public List<EnderecoDto> consultarEnderecoMedico(Long id){
         try {
 
