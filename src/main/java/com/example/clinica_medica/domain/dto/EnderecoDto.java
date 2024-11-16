@@ -16,7 +16,5 @@ public class EnderecoDto {
     private String numero;
     private String cidade;
     private String complemento;
-    private PacienteDto paciente;
-    private MedicoDto medico;
 
 }

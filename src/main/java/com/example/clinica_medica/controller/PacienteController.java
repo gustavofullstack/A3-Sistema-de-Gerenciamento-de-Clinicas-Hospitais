@@ -37,7 +37,7 @@ public class PacienteController {
     }
 
     @GetMapping("/buscar-id/{id}")
-    public ResponseEntity<Object> consultarTodosDadosPacientesPeloId(@PathVariable Long id) {
+    public ResponseEntity<Object> consultarDadosPacientesPeloId(@PathVariable Long id) {
         try {
 
             PacienteDto pacienteDto = pacienteService.consultarDadosPacientePeloId(id);

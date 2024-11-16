@@ -1,5 +1,7 @@
 package com.example.clinica_medica.domain.service;
 
+import com.example.clinica_medica.domain.dto.ContatoDto;
+import com.example.clinica_medica.domain.dto.EnderecoDto;
 import com.example.clinica_medica.domain.dto.MedicoDto;
 import com.example.clinica_medica.domain.exception.BusinessException;
 import com.example.clinica_medica.domain.model.Medico;
@@ -27,6 +29,14 @@ public class MedicoService {
 
         Medico medico = medicoRepository.findOneById(id);
         MedicoDto medicoDto = toDto(medico);
+
+        List<EnderecoDto> listaEnderecoMedico = enderecoService.buscarEnderecoPeloIdMedico(id);
+        List<ContatoDto> listaContatoMedico = contatoService.buscarContatoPeloIdMedico(id);
+
+        medicoDto.setEnderecos(listaEnderecoMedico);
+        medicoDto.setContatos(listaContatoMedico);
+
+
         return medicoDto;
     }
 

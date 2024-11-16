@@ -12,7 +12,5 @@ public class ContatoDto {
     private Long id;
     private String telefone;
     private String email;
-    private PacienteDto paciente;
-    private MedicoDto medico;
 
 }

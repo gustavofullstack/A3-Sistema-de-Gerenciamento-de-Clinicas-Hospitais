@@ -28,13 +28,35 @@ public class ContatoService {
     @Autowired
     private MedicoRepository medicoRepository;
 
+    public List<ContatoDto> buscarContatoPeloIdPaciente(Long idPaciente){
+        try {
+
+            List<Contato> listaContatoPaciente = contatoRepository.findByPacienteId(idPaciente);
+            return toDtoList(listaContatoPaciente);
+
+        } catch (BusinessException e){
+            throw new BusinessException("Não foi possivel resgatar os contatos do medico");
+        }
+    }
+
+    public List<ContatoDto> buscarContatoPeloIdMedico(Long idMedico){
+        try {
+
+            List<Contato> listaContatoMedico = contatoRepository.findByMedicoId(idMedico);
+            return toDtoList(listaContatoMedico);
+
+        } catch (BusinessException e){
+            throw new BusinessException("Não foi possivel resgatar os contatos do medico");
+        }
+    }
+
     public void salvarContatoPaciente(PacienteDto pacienteDto) throws BusinessException {
         try {
 
-            List<ContatoDto> listaContato = relacionaContatoMedico(pacienteDto);
-            List<Contato> listaContatoPaciente = toEntityList(listaContato);
+            List<Contato> listaContatoPaciente = toEntityList(pacienteDto.getContatos());
 
             for (Contato contato : listaContatoPaciente){
+                contato.setPaciente(pacienteRepository.findOneById(pacienteDto.getId()));
                 contatoRepository.save(contato);
             }
 
@@ -46,10 +68,10 @@ public class ContatoService {
     public void salvarContatoMedico(MedicoDto medicoDto) throws BusinessException {
         try {
 
-            List<ContatoDto> listaContato = relacionaContatoMedico(medicoDto);
-            List<Contato> listaContatoMedico = toEntityList(listaContato);
+            List<Contato> listaContatoMedico = toEntityList(medicoDto.getContatos());
 
             for (Contato contato : listaContatoMedico){
+                contato.setMedico(medicoRepository.findOneById(medicoDto.getId()));
                 contatoRepository.save(contato);
             }
 
@@ -58,24 +80,6 @@ public class ContatoService {
         }
     }
 
-    private List<ContatoDto> relacionaContatoMedico(MedicoDto medicoDto){
-
-        List<ContatoDto> listaContato = medicoDto.getContatos();
-        for(ContatoDto contatoDto : listaContato){
-            contatoDto.setMedico(toMedicoDto(medicoRepository.findOneById(medicoDto.getId())));
-        }
-        return listaContato;
-    }
-
-    private List<ContatoDto> relacionaContatoMedico(PacienteDto pacienteDto){
-
-        List<ContatoDto> listaContato = pacienteDto.getContatos();
-        for(ContatoDto contatoDto : listaContato){
-            contatoDto.setPaciente(toPacienteDto(pacienteRepository.findOneById(pacienteDto.getId())));
-        }
-        return listaContato;
-
-    }
 
     private ContatoDto toDto(Contato contato) {
         if (contato == null) {
@@ -86,8 +90,6 @@ public class ContatoService {
         contatoDto.setId(contato.getId());
         contatoDto.setTelefone(contato.getTelefone());
         contatoDto.setEmail(contato.getEmail());
-        contatoDto.setPaciente(toPacienteDto(contato.getPaciente()));
-        contatoDto.setMedico(toMedicoDto(contato.getMedico()));
 
         return contatoDto;
     }
@@ -101,8 +103,6 @@ public class ContatoService {
         contato.setId(contatoDto.getId());
         contato.setTelefone(contatoDto.getTelefone());
         contato.setEmail(contatoDto.getEmail());
-        contato.setPaciente(toPacienteEntity(contatoDto.getPaciente()));
-        contato.setMedico(toMedicoEntity(contatoDto.getMedico()));
 
         return contato;
     }

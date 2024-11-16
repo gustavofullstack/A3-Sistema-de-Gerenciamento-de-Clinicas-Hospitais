@@ -28,13 +28,35 @@ public class EnderecoService {
     @Autowired
     private PacienteRepository pacienteRepository;
 
+    public List<EnderecoDto> buscarEnderecoPeloIdPaciente(Long idPaciente){
+        try {
+
+            List<Endereco> enderecoPaciente = enderecoRepository.findByPacienteId(idPaciente);
+            return toDtoList(enderecoPaciente);
+
+        } catch (BusinessException e){
+            throw new BusinessException("Não foi possivel resgatar os endereços do medico");
+        }
+    }
+
+    public List<EnderecoDto> buscarEnderecoPeloIdMedico(Long idMedico){
+        try {
+
+            List<Endereco> enderecoMedico = enderecoRepository.findByMedicoId(idMedico);
+            return toDtoList(enderecoMedico);
+
+        } catch (BusinessException e){
+            throw new BusinessException("Não foi possivel resgatar os endereços do medico");
+        }
+    }
+
     public void salvarEndercoMedico(MedicoDto medicoDto) throws BusinessException {
         try {
 
-            List<EnderecoDto> listaEndereco = relacionaEnderecoMedico(medicoDto);
-            List<Endereco> listaEnderecoMedico = toEntityList(listaEndereco);
+            List<Endereco> listaEnderecoMedico = toEntityList(medicoDto.getEnderecos());
 
             for (Endereco endereco : listaEnderecoMedico){
+                endereco.setMedico(medicoRepository.findOneById(medicoDto.getId()));
                 enderecoRepository.save(endereco);
             }
 
@@ -46,38 +68,16 @@ public class EnderecoService {
     public void salvarEnderecoPaciente(PacienteDto pacienteDto) throws BusinessException {
         try {
 
-            List<EnderecoDto> listaEndereco = relacionaEnderecoPaciente(pacienteDto);
-            List<Endereco> listaEnderecoMedico = toEntityList(listaEndereco);
+            List<Endereco> listaEnderecoMedico = toEntityList(pacienteDto.getEnderecos());
 
             for (Endereco endereco : listaEnderecoMedico){
+                endereco.setPaciente(pacienteRepository.findOneById(pacienteDto.getId()));
                 enderecoRepository.save(endereco);
             }
 
         } catch (BusinessException e){
             throw new BusinessException("Não foi possivel salvar o endereço do medico");
         }
-    }
-
-    private List<EnderecoDto> relacionaEnderecoMedico(MedicoDto medicoDto){
-
-        List<EnderecoDto> listaEndereco = medicoDto.getEnderecos();
-        for(EnderecoDto enderecoDto : listaEndereco){
-            enderecoDto.setMedico(toMedicoDto(medicoRepository.findOneById(medicoDto.getId())));
-        }
-
-        return listaEndereco;
-
-    }
-
-    private List<EnderecoDto> relacionaEnderecoPaciente(PacienteDto pacienteDto){
-
-        List<EnderecoDto> listaEndereco = pacienteDto.getEnderecos();
-        for(EnderecoDto enderecoDto : listaEndereco){
-            enderecoDto.setPaciente(toPacienteDto(pacienteRepository.findOneById(pacienteDto.getId())));
-        }
-
-        return listaEndereco;
-
     }
 
     private EnderecoDto toDto(Endereco endereco) {
@@ -94,9 +94,6 @@ public class EnderecoService {
         enderecoDto.setNumero(endereco.getNumero());
         enderecoDto.setCidade(endereco.getCidade());
         enderecoDto.setComplemento(endereco.getComplemento());
-
-        enderecoDto.setPaciente(toPacienteDto(endereco.getPaciente()));
-        enderecoDto.setMedico(toMedicoDto(endereco.getMedico()));
 
         return enderecoDto;
     }
@@ -136,9 +133,6 @@ public class EnderecoService {
         endereco.setNumero(enderecoDto.getNumero());
         endereco.setCidade(enderecoDto.getCidade());
         endereco.setComplemento(enderecoDto.getComplemento());
-
-        endereco.setPaciente(toPacienteEntity(enderecoDto.getPaciente()));
-        endereco.setMedico(toMedicoEntity(enderecoDto.getMedico()));
 
         return endereco;
     }
