@@ -10,6 +10,7 @@ import com.example.clinica_medica.domain.model.Paciente;
 import com.example.clinica_medica.domain.repository.EnderecoRepository;
 import com.example.clinica_medica.domain.repository.MedicoRepository;
 import com.example.clinica_medica.domain.repository.PacienteRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -51,6 +52,17 @@ public class EnderecoService {
         }
     }
 
+    @Transactional
+    public void deletarEnderecoMedico(Long idMedico, Long idEndereco) throws BusinessException{
+        try {
+
+            enderecoRepository.deleteByIdAndMedicoId(idEndereco, idMedico);
+
+        } catch (BusinessException e){
+            throw new BusinessException(e.getMessage());
+        }
+    }
+
     public List<EnderecoDto> buscarEnderecoPeloIdPaciente(Long idPaciente){
         try {
 
@@ -59,6 +71,17 @@ public class EnderecoService {
 
         } catch (BusinessException e){
             throw new BusinessException("Não foi possivel resgatar os endereços do medico");
+        }
+    }
+
+    @Transactional
+    public void deletarEnderecoPaciente(Long idPaciente, Long idEndereco) throws BusinessException{
+        try {
+
+            enderecoRepository.deleteByIdAndPacienteId(idEndereco, idPaciente);
+
+        } catch (BusinessException e){
+            throw new BusinessException(e.getMessage());
         }
     }
 

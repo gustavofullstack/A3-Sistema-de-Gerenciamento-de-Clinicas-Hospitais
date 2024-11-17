@@ -66,6 +66,20 @@ public class MedicoService {
         }
     }
 
+    @Transactional
+    public void deletarEnderecoMedico(Long idMedico, Long idEndereco) throws BusinessException{
+        try {
+
+            medicoRepository.findById(idMedico)
+                    .orElseThrow(() -> new BusinessException("Medico não encontrado"));
+
+            enderecoService.deletarEnderecoMedico(idMedico, idEndereco);
+
+        } catch (BusinessException e){
+            throw new BusinessException(e.getMessage());
+        }
+    }
+
     public void alterarEnderecoMedico(EnderecoDto enderecoDto, Long idMedico){
         try {
 
@@ -91,14 +105,8 @@ public class MedicoService {
     }
 
     public List<MedicoSimplificadoDto> buscarTodosMedicos() throws BusinessException{
-        try {
-
-            List<Medico> medicos = medicoRepository.findAll();
-            return toDtoListSimplificado(medicos);
-
-        } catch (Exception e) {
-            throw new BusinessException("Não foi possível listar todos os restaurantes.");
-        }
+        List<Medico> medicos = medicoRepository.findAll();
+        return toDtoListSimplificado(medicos);
     }
 
     @Transactional
@@ -127,8 +135,8 @@ public class MedicoService {
     }
 
     @Transactional
-    public void deletarMedico(Long idRestaurante) throws BusinessException{
-        Medico medico = medicoRepository.findById(idRestaurante)
+    public void deletarMedico(Long idMedico) throws BusinessException{
+        Medico medico = medicoRepository.findById(idMedico)
                 .orElseThrow(() -> new BusinessException("Medico não encontrado"));
 
         medicoRepository.delete(medico);

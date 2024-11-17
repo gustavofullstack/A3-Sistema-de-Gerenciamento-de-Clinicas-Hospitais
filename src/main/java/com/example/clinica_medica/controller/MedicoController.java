@@ -111,7 +111,6 @@ public class MedicoController {
     }
 
     @PostMapping("/adicionar-endereco/{idMedico}")
-    @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<Object> adicionarEnderecoPaciente(@RequestBody List<EnderecoDto> enderecosDto, @PathVariable("idMedico") Long idMedico){
         try {
 
@@ -128,6 +127,18 @@ public class MedicoController {
         try {
 
             medicoService.alterarEnderecoMedico(enderecoDto, idMedico);
+            return ResponseEntity.noContent().build();
+
+        }catch (Exception e){
+            return ResponseEntity.unprocessableEntity().body(e.getMessage());
+        }
+    }
+
+    @DeleteMapping("/deletar-endereco/{idMedico}/{idEndereco}")
+    public ResponseEntity<Object> deletarMedico(@PathVariable("idMedico") Long idMedico, @PathVariable("idEndereco") Long idEndereco){
+        try {
+
+            medicoService.deletarEnderecoMedico(idMedico, idEndereco);
             return ResponseEntity.noContent().build();
 
         }catch (Exception e){

@@ -15,6 +15,10 @@ public interface EnderecoRepository extends JpaRepository<Endereco, Long> {
 
     List<Endereco> findByPacienteId(Long id);
 
+    void deleteByIdAndMedicoId(Long idEndereco, Long idMedico);
+
+    void deleteByIdAndPacienteId(Long idEndereco, Long idMedico);
+
     @Modifying
     @Transactional
     @Query(value = """

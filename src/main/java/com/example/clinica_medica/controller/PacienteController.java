@@ -123,6 +123,18 @@ public class PacienteController {
         }
     }
 
+    @DeleteMapping("/deletar-endereco/{idPaciente}/{idEndereco}")
+    public ResponseEntity<Object> deletarMedico(@PathVariable("idPaciente") Long idPaciente, @PathVariable("idEndereco") Long idEndereco){
+        try {
+
+            pacienteService.deletarEnderecoPaciente(idPaciente, idEndereco);
+            return ResponseEntity.noContent().build();
+
+        }catch (Exception e){
+            return ResponseEntity.unprocessableEntity().body(e.getMessage());
+        }
+    }
+
     @PostMapping("/adicionar-endereco/{idPaciente}")
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<Object> adicionarEnderecoPaciente(@RequestBody List<EnderecoDto> enderecosDto, @PathVariable("idPaciente") Long idPaciente){

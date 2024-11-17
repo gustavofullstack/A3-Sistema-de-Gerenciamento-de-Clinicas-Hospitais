@@ -57,6 +57,20 @@ public class PacienteService {
         }
     }
 
+    @Transactional
+    public void deletarEnderecoPaciente(Long idPaciente, Long idEndereco) throws BusinessException{
+        try {
+
+            pacienteRepository.findById(idPaciente)
+                    .orElseThrow(() -> new BusinessException("Paciente não encontrado"));
+
+            enderecoService.deletarEnderecoPaciente(idPaciente, idEndereco);
+
+        } catch (BusinessException e){
+            throw new BusinessException(e.getMessage());
+        }
+    }
+
     public List<ContatoDto> consultarContatosPeloIdPaciente(Long id){
         try {
 
