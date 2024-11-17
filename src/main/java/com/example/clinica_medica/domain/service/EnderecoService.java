@@ -5,6 +5,7 @@ import com.example.clinica_medica.domain.dto.MedicoDto;
 import com.example.clinica_medica.domain.dto.PacienteDto;
 import com.example.clinica_medica.domain.exception.BusinessException;
 import com.example.clinica_medica.domain.model.Endereco;
+import com.example.clinica_medica.domain.model.Medico;
 import com.example.clinica_medica.domain.model.Paciente;
 import com.example.clinica_medica.domain.repository.EnderecoRepository;
 import com.example.clinica_medica.domain.repository.MedicoRepository;
@@ -31,7 +32,7 @@ public class EnderecoService {
     public void alterarEnderecoIdMedico(EnderecoDto enderecoDto, Long idMedico) throws BusinessException {
         try {
 
-            enderecoRepository.updateByMedicoId(idMedico, enderecoDto.getBairro(), enderecoDto.getCep(),
+            enderecoRepository.updateByMedicoId(idMedico, enderecoDto.getId(), enderecoDto.getBairro(), enderecoDto.getCep(),
                     enderecoDto.getCidade(), enderecoDto.getComplemento(), enderecoDto.getNumero(), enderecoDto.getRua());
 
         } catch (BusinessException e){
@@ -84,6 +85,26 @@ public class EnderecoService {
 
         } catch (BusinessException e){
             throw new BusinessException("Não foi possivel salvar o endereço do medico");
+        }
+    }
+
+    public void adicionarEnderecoIdMedico(List<EnderecoDto> enderecosDto, Long idPaciente) throws BusinessException {
+        try {
+
+            List<Endereco> enderecosPaciente = toEntityList(enderecosDto);
+
+            Medico medico = medicoRepository.findOneById(idPaciente);
+            if (Optional.ofNullable(medico).isEmpty()){
+                throw new BusinessException("Medico não existente");
+            }
+
+            for (Endereco endereco : enderecosPaciente){
+                endereco.setMedico(medico);
+                enderecoRepository.save(endereco);
+            }
+
+        } catch (BusinessException e){
+            throw new BusinessException(e.getMessage());
         }
     }
 

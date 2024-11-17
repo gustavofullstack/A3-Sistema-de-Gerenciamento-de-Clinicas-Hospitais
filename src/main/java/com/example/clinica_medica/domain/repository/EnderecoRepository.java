@@ -25,10 +25,12 @@ public interface EnderecoRepository extends JpaRepository<Endereco, Long> {
             complemento=:complemento,
             numero=:numero,
             rua=:rua
-        WHERE medico_id=:idMedico;
+        WHERE medico_id=:idMedico
+            AND id=:idEndereco;
     """, nativeQuery = true)
     void updateByMedicoId(
             @Param("idMedico")Long idMedico,
+            @Param("idEndereco")Long idEndereco,
             @Param("bairro") String bairro,
             @Param("cep") String cep,
             @Param("cidade") String cidade,

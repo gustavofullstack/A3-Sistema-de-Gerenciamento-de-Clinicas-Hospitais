@@ -56,6 +56,16 @@ public class MedicoService {
         }
     }
 
+    public void adicionarEnderecoIdMedico(List<EnderecoDto> enderecoaDto, Long idMedico){
+        try {
+
+            enderecoService.adicionarEnderecoIdMedico(enderecoaDto, idMedico);
+
+        } catch (BusinessException e){
+            throw new BusinessException(e.getMessage());
+        }
+    }
+
     public void alterarEnderecoMedico(EnderecoDto enderecoDto, Long idMedico){
         try {
 
