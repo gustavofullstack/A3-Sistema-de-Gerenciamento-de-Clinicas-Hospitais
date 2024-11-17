@@ -6,6 +6,7 @@ import com.example.clinica_medica.domain.dto.MedicoDto;
 import com.example.clinica_medica.domain.dto.MedicoSimplificadoDto;
 import com.example.clinica_medica.domain.exception.BusinessException;
 import com.example.clinica_medica.domain.service.MedicoService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -40,11 +41,11 @@ public class MedicoController {
         }
     }
 
-    @GetMapping("/buscar-id/{id}")
-    public ResponseEntity<Object> consultarDadosMedicoPeloId(@PathVariable Long id) {
+    @GetMapping("/buscar-id/{idMedico}")
+    public ResponseEntity<Object> consultarDadosMedicoPeloId(@PathVariable("idMedico") Long idMedico) {
         try {
 
-            MedicoDto medico = medicoService.consultarDadosMedicoPeloId(id);
+            MedicoDto medico = medicoService.buscarDadosMedicoPeloId(idMedico);
 
             if(Optional.ofNullable(medico).isEmpty()){
                 return ResponseEntity.noContent().build();
@@ -58,7 +59,7 @@ public class MedicoController {
     }
 
     @PostMapping("/cadastro-completo")
-    public ResponseEntity<Object> cadastroCompleto(@RequestBody MedicoDto medicoDto){
+    public ResponseEntity<Object> cadastroCompleto(@Valid @RequestBody MedicoDto medicoDto){
         try {
 
             medicoService.cadastroCompleto(medicoDto);
@@ -70,7 +71,7 @@ public class MedicoController {
     }
 
     @PutMapping("/alterar-id/{id}")
-    public ResponseEntity<Object> updateMedico(@RequestBody MedicoDto medicoDto, @PathVariable("id") Long id){
+    public ResponseEntity<Object> updateMedico(@Valid @RequestBody MedicoDto medicoDto, @PathVariable("id") Long id){
         try {
 
             medicoDto.setId(id);
@@ -98,7 +99,7 @@ public class MedicoController {
     public ResponseEntity<List<Object>> consultarEnderecoPeloIdMedico(@PathVariable("idMedico") Long idMedico){
         try {
 
-            List<EnderecoDto> enderecoMedico = medicoService.consultarEnderecoMedico(idMedico);
+            List<EnderecoDto> enderecoMedico = medicoService.buscarEnderecoMedico(idMedico);
 
             if(enderecoMedico.isEmpty()){
                 throw new BusinessException("Endereço não encontrado para o medico");
@@ -111,7 +112,7 @@ public class MedicoController {
     }
 
     @PostMapping("/adicionar-endereco/{idMedico}")
-    public ResponseEntity<Object> adicionarEnderecoPaciente(@RequestBody List<EnderecoDto> enderecosDto, @PathVariable("idMedico") Long idMedico){
+    public ResponseEntity<Object> adicionarEnderecoPaciente(@Valid @RequestBody List<EnderecoDto> enderecosDto, @PathVariable("idMedico") Long idMedico){
         try {
 
             medicoService.adicionarEnderecoIdMedico(enderecosDto, idMedico);
@@ -123,7 +124,7 @@ public class MedicoController {
     }
 
     @PutMapping("/alterar-endereco/{id}")
-    public ResponseEntity<Object> updateEnderecoMedico(@RequestBody EnderecoDto enderecoDto, @PathVariable("id") Long idMedico){
+    public ResponseEntity<Object> updateEnderecoMedico(@Valid @RequestBody EnderecoDto enderecoDto, @PathVariable("id") Long idMedico){
         try {
 
             medicoService.alterarEnderecoMedico(enderecoDto, idMedico);
@@ -150,7 +151,7 @@ public class MedicoController {
     public ResponseEntity<List<Object>> consultarContatosPeloIdPaciente(@PathVariable("idMedico") Long idMedico){
         try {
 
-            List<ContatoDto> contatosPaciente = medicoService.consultarContatosPeloIdMedico(idMedico);
+            List<ContatoDto> contatosPaciente = medicoService.buscarContatosPeloIdMedico(idMedico);
 
             if(contatosPaciente.isEmpty()){
                 throw new BusinessException("Nenhum contato encontrado para o medico");
@@ -175,7 +176,7 @@ public class MedicoController {
     }
 
     @PostMapping("/adicionar-contato/{idMedico}")
-    public ResponseEntity<Object> adicionarContatoPaciente(@RequestBody List<ContatoDto> contatoDto, @PathVariable("idMedico") Long idMedico){
+    public ResponseEntity<Object> adicionarContatoPaciente(@Valid @RequestBody List<ContatoDto> contatoDto, @PathVariable("idMedico") Long idMedico){
         try {
 
             medicoService.adicionarContatoIdMedico(contatoDto, idMedico);
@@ -187,7 +188,7 @@ public class MedicoController {
     }
 
     @PutMapping("/alterar-contato/{id}")
-    public ResponseEntity<Object> updateContatoMedico(@RequestBody ContatoDto contatoDto, @PathVariable("id") Long idMedico){
+    public ResponseEntity<Object> updateContatoMedico(@Valid @RequestBody ContatoDto contatoDto, @PathVariable("id") Long idMedico){
         try {
 
             medicoService.alterarContatoIdMedico(contatoDto, idMedico);

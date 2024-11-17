@@ -28,5 +28,6 @@ public class Exame {
 
     @ManyToOne
     @JoinColumn(name = "consulta_id", nullable = false)
+    @ToString.Exclude
     private Consulta consulta;
 }

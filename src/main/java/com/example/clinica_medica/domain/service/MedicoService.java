@@ -1,11 +1,9 @@
 package com.example.clinica_medica.domain.service;
 
-import com.example.clinica_medica.domain.dto.ContatoDto;
-import com.example.clinica_medica.domain.dto.EnderecoDto;
-import com.example.clinica_medica.domain.dto.MedicoDto;
-import com.example.clinica_medica.domain.dto.MedicoSimplificadoDto;
+import com.example.clinica_medica.domain.dto.*;
 import com.example.clinica_medica.domain.exception.BusinessException;
 import com.example.clinica_medica.domain.model.Medico;
+import com.example.clinica_medica.domain.model.Paciente;
 import com.example.clinica_medica.domain.repository.MedicoRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +24,7 @@ public class MedicoService {
     @Autowired
     private ContatoService contatoService;
 
-    public List<ContatoDto> consultarContatosPeloIdMedico(Long idMedico){
+    public List<ContatoDto> buscarContatosPeloIdMedico(Long idMedico){
         try {
 
             medicoRepository.findById(idMedico)
@@ -81,7 +79,7 @@ public class MedicoService {
         }
     }
 
-    public List<EnderecoDto> consultarEnderecoMedico(Long idMedico){
+    public List<EnderecoDto> buscarEnderecoMedico(Long idMedico){
         try {
 
             medicoRepository.findById(idMedico)
@@ -136,13 +134,13 @@ public class MedicoService {
         }
     }
 
-    public MedicoDto consultarDadosMedicoPeloId(Long id){
+    public MedicoDto buscarDadosMedicoPeloId(Long idMedico){
 
-        Medico medico = medicoRepository.findOneById(id);
+        Medico medico = medicoRepository.findOneById(idMedico);
         MedicoDto medicoDto = toDto(medico);
 
-        List<EnderecoDto> listaEnderecoMedico = enderecoService.buscarEnderecoPeloIdMedico(id);
-        List<ContatoDto> listaContatoMedico = contatoService.buscarContatoPeloIdMedico(id);
+        List<EnderecoDto> listaEnderecoMedico = enderecoService.buscarEnderecoPeloIdMedico(idMedico);
+        List<ContatoDto> listaContatoMedico = contatoService.buscarContatoPeloIdMedico(idMedico);
 
         medicoDto.setEnderecos(listaEnderecoMedico);
         medicoDto.setContatos(listaContatoMedico);
@@ -188,7 +186,7 @@ public class MedicoService {
         medicoRepository.delete(medico);
     }
 
-    private MedicoDto toDto(Medico medico) {
+    public MedicoDto toDto(Medico medico) {
         if (medico == null) {
             throw new BusinessException("Medico não encontrado");
         }
@@ -206,7 +204,7 @@ public class MedicoService {
         return medicoDto;
     }
 
-    private MedicoSimplificadoDto toDtoSimplificado(Medico medico) {
+    public MedicoSimplificadoDto toDtoSimplificado(Medico medico) {
         if (medico == null) {
             throw new BusinessException("Medico não encontrado");
         }
@@ -224,7 +222,7 @@ public class MedicoService {
         return medicoDto;
     }
 
-    private Medico toEntity(MedicoDto medicoDto) {
+    public Medico toEntity(MedicoDto medicoDto) {
         if (medicoDto == null) {
             throw new BusinessException("Medico não encontrado");
         }
@@ -241,7 +239,29 @@ public class MedicoService {
         return medico;
     }
 
-    private List<MedicoDto> toDtoList(List<Medico> medicos) {
+    public Medico toEntitySimplificado(MedicoSimplificadoDto medicoSimplificadoDto) {
+        try {
+
+            if (medicoSimplificadoDto == null) {
+                throw new BusinessException("paciente não encontrado");
+            }
+
+            Medico medico = new Medico();
+
+            medico.setId(medicoSimplificadoDto.getId());
+            medico.setNome(medicoSimplificadoDto.getNome());
+            medico.setCpf(medicoSimplificadoDto.getCpf());
+            medico.setDataNascimento(medicoSimplificadoDto.getDataNascimento());
+            medico.setGenero(medicoSimplificadoDto.getGenero());
+
+            return medico;
+
+        } catch (BusinessException e){
+            throw new BusinessException(e.getMessage());
+        }
+    }
+
+    public List<MedicoDto> toDtoList(List<Medico> medicos) {
 
         return medicos.stream()
                 .map(this::toDto)
@@ -249,7 +269,7 @@ public class MedicoService {
 
     }
 
-    private List<MedicoSimplificadoDto> toDtoListSimplificado(List<Medico> medicos) {
+    public List<MedicoSimplificadoDto> toDtoListSimplificado(List<Medico> medicos) {
 
         return medicos.stream()
                 .map(this::toDtoSimplificado)

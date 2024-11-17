@@ -40,14 +40,18 @@ public class Paciente {
     private Genero genero;
 
     @OneToMany(mappedBy = "paciente", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ToString.Exclude
     private List<Endereco> enderecos;
 
     @OneToMany(mappedBy = "paciente", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ToString.Exclude
     private List<Contato> contatos;
 
     @OneToMany(mappedBy = "paciente", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ToString.Exclude
     private List<HistoricoMedico> historicoMedico;
 
     @OneToMany(mappedBy = "paciente", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ToString.Exclude
     private List<Consulta> consultas;
 }

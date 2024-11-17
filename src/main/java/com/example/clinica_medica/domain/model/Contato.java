@@ -22,9 +22,11 @@ public class Contato {
 
     @ManyToOne
     @JoinColumn(name = "paciente_id")
+    @ToString.Exclude
     private Paciente paciente;
 
     @ManyToOne
     @JoinColumn(name = "medico_id")
+    @ToString.Exclude
     private Medico medico;
 }

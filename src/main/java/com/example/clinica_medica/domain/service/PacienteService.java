@@ -103,7 +103,7 @@ public class PacienteService {
         }
     }
 
-    public List<ContatoDto> consultarContatosPeloIdPaciente(Long idPaciente){
+    public List<ContatoDto> buscarContatosPeloIdPaciente(Long idPaciente){
         try {
 
             pacienteRepository.findById(idPaciente)
@@ -121,7 +121,7 @@ public class PacienteService {
         }
     }
 
-    public List<EnderecoDto> consultarEnderecosPaciente(Long idPaciente){
+    public List<EnderecoDto> buscarEnderecosPaciente(Long idPaciente){
         try {
 
             pacienteRepository.findById(idPaciente)
@@ -139,13 +139,13 @@ public class PacienteService {
         }
     }
 
-    public PacienteDto consultarDadosPacientePeloId(Long id){
+    public PacienteDto buscarDadosPacientePeloId(Long idPaciente){
 
-        Paciente paciente = pacienteRepository.findOneById(id);
+        Paciente paciente = pacienteRepository.findOneById(idPaciente);
         PacienteDto pacienteDto = toDto(paciente);
 
-        List<EnderecoDto> listaEnderecoPaciente = enderecoService.buscarEnderecoPeloIdPaciente(id);
-        List<ContatoDto> listaContatoPaciente = contatoService.buscarContatoPeloIdPaciente(id);
+        List<EnderecoDto> listaEnderecoPaciente = enderecoService.buscarEnderecoPeloIdPaciente(idPaciente);
+        List<ContatoDto> listaContatoPaciente = contatoService.buscarContatoPeloIdPaciente(idPaciente);
 
         pacienteDto.setEnderecos(listaEnderecoPaciente);
         pacienteDto.setContatos(listaContatoPaciente);
@@ -160,7 +160,7 @@ public class PacienteService {
             return toDtoListSimplificado(pacientes);
 
         } catch (Exception e) {
-            throw new BusinessException("Não foi possível listar todos os restaurantes.");
+            throw new BusinessException("Não foi possível listar todos os Pacientes.");
         }
     }
 
@@ -265,15 +265,29 @@ public class PacienteService {
         }
     }
 
-    private List<PacienteDto> toDtoList(List<Paciente> pacientes) {
+    public Paciente toEntitySimplificado(PacienteSimplificadoDto pacienteSimplificadoDto) {
+        try {
 
-        return pacientes.stream()
-                .map(this::toDto)
-                .collect(Collectors.toList());
+            if (pacienteSimplificadoDto == null) {
+                throw new BusinessException("paciente não encontrado");
+            }
 
+            Paciente paciente = new Paciente();
+
+            paciente.setId(pacienteSimplificadoDto.getId());
+            paciente.setNome(pacienteSimplificadoDto.getNome());
+            paciente.setCpf(pacienteSimplificadoDto.getCpf());
+            paciente.setDataNascimento(pacienteSimplificadoDto.getDataNascimento());
+            paciente.setGenero(pacienteSimplificadoDto.getGenero());
+
+            return paciente;
+
+        } catch (BusinessException e){
+            throw new BusinessException(e.getMessage());
+        }
     }
 
-    private List<PacienteSimplificadoDto> toDtoListSimplificado(List<Paciente> pacientes) {
+    public List<PacienteSimplificadoDto> toDtoListSimplificado(List<Paciente> pacientes) {
 
         return pacientes.stream()
                 .map(this::toDtoSimplificado)

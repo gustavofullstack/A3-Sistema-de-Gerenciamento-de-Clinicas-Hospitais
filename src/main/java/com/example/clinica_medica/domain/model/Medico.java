@@ -47,12 +47,15 @@ public class Medico {
     private Genero genero;
 
     @OneToMany(mappedBy = "medico", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ToString.Exclude
     private List<Endereco> enderecos;
 
     @OneToMany(mappedBy = "medico", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ToString.Exclude
     private List<Contato> contatos;
 
     @OneToMany(mappedBy = "medico")
+    @ToString.Exclude
     private List<Consulta> consultas;
 
 }

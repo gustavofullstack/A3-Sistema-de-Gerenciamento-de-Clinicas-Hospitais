@@ -29,16 +29,20 @@ public class Consulta {
 
     @ManyToOne
     @JoinColumn(name = "paciente_id")
+    @ToString.Exclude
     private Paciente paciente;
 
     @ManyToOne
     @JoinColumn(name = "medico_id")
+    @ToString.Exclude
     private Medico medico;
 
     @OneToMany(mappedBy = "consulta")
+    @ToString.Exclude
     private List<Prescricao> prescricoes;
 
     @OneToMany(mappedBy = "consulta")
+    @ToString.Exclude
     private List<Exame> exames;
 
 }

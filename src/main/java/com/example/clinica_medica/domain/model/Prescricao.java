@@ -24,6 +24,7 @@ public class Prescricao {
     private String instrucoesUso;
 
     @ManyToOne
-    @JoinColumn(name = "consulta_id", nullable = false) // Chave estrangeira para a consulta
+    @JoinColumn(name = "consulta_id", nullable = false)
+    @ToString.Exclude
     private Consulta consulta;
 }

@@ -40,11 +40,11 @@ public class PacienteController {
         }
     }
 
-    @GetMapping("/buscar-id/{id}")
-    public ResponseEntity<Object> consultarDadosPacientesPeloId(@PathVariable Long id) {
+    @GetMapping("/buscar-id/{idPaciente}")
+    public ResponseEntity<Object> consultarDadosPacientesPeloId(@PathVariable("idPaciente") Long idPaciente) {
         try {
 
-            PacienteDto pacienteDto = pacienteService.consultarDadosPacientePeloId(id);
+            PacienteDto pacienteDto = pacienteService.buscarDadosPacientePeloId(idPaciente);
 
             if(Optional.ofNullable(pacienteDto).isEmpty()){
                 return ResponseEntity.noContent().build();
@@ -99,7 +99,7 @@ public class PacienteController {
     public ResponseEntity<List<Object>> consultarEnderecosPeloIdPaciente(@PathVariable("idPaciente") Long idPaciente){
         try {
 
-            List<EnderecoDto> enderecosPaciente = pacienteService.consultarEnderecosPaciente(idPaciente);
+            List<EnderecoDto> enderecosPaciente = pacienteService.buscarEnderecosPaciente(idPaciente);
 
             if(enderecosPaciente.isEmpty()){
                 throw new BusinessException("Nenhum endereço encontrado para o paciente");
@@ -152,7 +152,7 @@ public class PacienteController {
     public ResponseEntity<List<Object>> consultarContatosPeloIdPaciente(@PathVariable("idPaciente") Long idPaciente){
         try {
 
-            List<ContatoDto> contatosPaciente = pacienteService.consultarContatosPeloIdPaciente(idPaciente);
+            List<ContatoDto> contatosPaciente = pacienteService.buscarContatosPeloIdPaciente(idPaciente);
 
             if(contatosPaciente.isEmpty()){
                 throw new BusinessException("Nenhum contato encontrado para o paciente");
