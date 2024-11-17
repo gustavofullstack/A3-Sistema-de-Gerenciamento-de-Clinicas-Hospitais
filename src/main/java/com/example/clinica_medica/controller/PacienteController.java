@@ -95,11 +95,11 @@ public class PacienteController {
         }
     }
 
-    @GetMapping("/buscar-enderecos/{id}")
-    public ResponseEntity<List<Object>> consultarEnderecosPeloIdPaciente(@PathVariable("id") Long id){
+    @GetMapping("/buscar-enderecos/{idPaciente}")
+    public ResponseEntity<List<Object>> consultarEnderecosPeloIdPaciente(@PathVariable("idPaciente") Long idPaciente){
         try {
 
-            List<EnderecoDto> enderecosPaciente = pacienteService.consultarEnderecosPaciente(id);
+            List<EnderecoDto> enderecosPaciente = pacienteService.consultarEnderecosPaciente(idPaciente);
 
             if(enderecosPaciente.isEmpty()){
                 throw new BusinessException("Nenhum endereço encontrado para o paciente");
@@ -115,7 +115,7 @@ public class PacienteController {
     public ResponseEntity<Object> updateEnderecoPaciente(@RequestBody EnderecoDto enderecoDto, @PathVariable("id") Long idPaciente){
         try {
 
-            pacienteService.alterarEnderecoPaciente(enderecoDto, idPaciente);
+                pacienteService.alterarEnderecoPaciente(enderecoDto, idPaciente);
             return ResponseEntity.noContent().build();
 
         }catch (Exception e){
@@ -148,11 +148,11 @@ public class PacienteController {
         }
     }
 
-    @GetMapping("/buscar-contatos/{id}")
-    public ResponseEntity<List<Object>> consultarContatosPeloIdPaciente(@PathVariable("id") Long id){
+    @GetMapping("/buscar-contatos/{idPaciente}")
+    public ResponseEntity<List<Object>> consultarContatosPeloIdPaciente(@PathVariable("idPaciente") Long idPaciente){
         try {
 
-            List<ContatoDto> contatosPaciente = pacienteService.consultarContatosPeloIdPaciente(id);
+            List<ContatoDto> contatosPaciente = pacienteService.consultarContatosPeloIdPaciente(idPaciente);
 
             if(contatosPaciente.isEmpty()){
                 throw new BusinessException("Nenhum contato encontrado para o paciente");
@@ -161,6 +161,30 @@ public class PacienteController {
 
         } catch (Exception e){
             return ResponseEntity.internalServerError().body(Collections.singletonList(e.getMessage()));
+        }
+    }
+
+    @DeleteMapping("/deletar-contato/{idPaciente}/{idContato}")
+    public ResponseEntity<Object> deletarContatoMedico(@PathVariable("idPaciente") Long idPaciente, @PathVariable("idContato") Long idContato){
+        try {
+
+            pacienteService.deletarContatoPaciente(idPaciente, idContato);
+            return ResponseEntity.noContent().build();
+
+        }catch (Exception e){
+            return ResponseEntity.unprocessableEntity().body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/adicionar-contato/{idPaciente}")
+    public ResponseEntity<Object> adicionarContatoPaciente(@RequestBody List<ContatoDto> contatoDto, @PathVariable("idPaciente") Long idPaciente){
+        try {
+
+            pacienteService.adicionarContatoIdPaciente(contatoDto, idPaciente);
+            return ResponseEntity.noContent().build();
+
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(e.getMessage());
         }
     }
 

@@ -4,6 +4,7 @@ import com.example.clinica_medica.domain.dto.EnderecoDto;
 import com.example.clinica_medica.domain.dto.MedicoDto;
 import com.example.clinica_medica.domain.dto.PacienteDto;
 import com.example.clinica_medica.domain.exception.BusinessException;
+import com.example.clinica_medica.domain.model.Contato;
 import com.example.clinica_medica.domain.model.Endereco;
 import com.example.clinica_medica.domain.model.Medico;
 import com.example.clinica_medica.domain.model.Paciente;
@@ -33,28 +34,52 @@ public class EnderecoService {
     public void alterarEnderecoIdMedico(EnderecoDto enderecoDto, Long idMedico) throws BusinessException {
         try {
 
+            enderecoRepository.findById(enderecoDto.getId())
+                    .orElseThrow(() -> new BusinessException("Endereco não encontrado"));
+
+            Endereco endereco = enderecoRepository.findOneById(enderecoDto.getId());
+            if (endereco.getMedico() == null || !endereco.getMedico().getId().equals(idMedico)) {
+                throw new BusinessException("Endereço não pertence a esse medico");
+            }
+
             enderecoRepository.updateByMedicoId(idMedico, enderecoDto.getId(), enderecoDto.getBairro(), enderecoDto.getCep(),
                     enderecoDto.getCidade(), enderecoDto.getComplemento(), enderecoDto.getNumero(), enderecoDto.getRua());
 
         } catch (BusinessException e){
-            throw new BusinessException("Não foi possivel alterar o endereço do medico");
+            throw new BusinessException(e.getMessage());
         }
     }
 
     public void alterarEnderecoIdPaciente(EnderecoDto enderecoDto, Long idPaciente) throws BusinessException {
         try {
 
+            enderecoRepository.findById(enderecoDto.getId())
+                    .orElseThrow(() -> new BusinessException("Endereco não encontrado"));
+
+            Endereco endereco = enderecoRepository.findOneById(enderecoDto.getId());
+            if (endereco.getPaciente() == null || !endereco.getPaciente().getId().equals(idPaciente)) {
+                throw new BusinessException("Endereço não pertence a esse paciente");
+            }
+
             enderecoRepository.updateByPacienteId(idPaciente, enderecoDto.getId(), enderecoDto.getBairro(), enderecoDto.getCep(),
                     enderecoDto.getCidade(), enderecoDto.getComplemento(), enderecoDto.getNumero(), enderecoDto.getRua());
 
         } catch (BusinessException e){
-            throw new BusinessException("Não foi possivel alterar o endereço do medico");
+            throw new BusinessException(e.getMessage());
         }
     }
 
     @Transactional
     public void deletarEnderecoMedico(Long idMedico, Long idEndereco) throws BusinessException{
         try {
+
+            enderecoRepository.findById(idEndereco)
+                    .orElseThrow(() -> new BusinessException("Endereço não encontrado"));
+
+            Endereco endereco = enderecoRepository.findOneById(idEndereco);
+            if (endereco.getMedico() == null || !endereco.getMedico().getId().equals(idMedico)) {
+                throw new BusinessException("Endereço não pertence a esse medico");
+            }
 
             enderecoRepository.deleteByIdAndMedicoId(idEndereco, idMedico);
 
@@ -78,6 +103,14 @@ public class EnderecoService {
     public void deletarEnderecoPaciente(Long idPaciente, Long idEndereco) throws BusinessException{
         try {
 
+            enderecoRepository.findById(idEndereco)
+                    .orElseThrow(() -> new BusinessException("Endereço não encontrado"));
+
+            Endereco endereco = enderecoRepository.findOneById(idEndereco);
+            if (endereco.getPaciente() == null || !endereco.getPaciente().getId().equals(idPaciente)) {
+                throw new BusinessException("Endereço não pertence a esse paciente");
+            }
+
             enderecoRepository.deleteByIdAndPacienteId(idEndereco, idPaciente);
 
         } catch (BusinessException e){
@@ -87,6 +120,9 @@ public class EnderecoService {
 
     public List<EnderecoDto> buscarEnderecoPeloIdMedico(Long idMedico){
         try {
+
+            medicoRepository.findById(idMedico)
+                    .orElseThrow(() -> new BusinessException("Medico não encontrado"));
 
             List<Endereco> enderecoMedico = enderecoRepository.findByMedicoId(idMedico);
             return toDtoList(enderecoMedico);
@@ -111,12 +147,12 @@ public class EnderecoService {
         }
     }
 
-    public void adicionarEnderecoIdMedico(List<EnderecoDto> enderecosDto, Long idPaciente) throws BusinessException {
+    public void adicionarEnderecoIdMedico(List<EnderecoDto> enderecosDto, Long idMedico) throws BusinessException {
         try {
 
             List<Endereco> enderecosPaciente = toEntityList(enderecosDto);
 
-            Medico medico = medicoRepository.findOneById(idPaciente);
+            Medico medico = medicoRepository.findOneById(idMedico);
             if (Optional.ofNullable(medico).isEmpty()){
                 throw new BusinessException("Medico não existente");
             }

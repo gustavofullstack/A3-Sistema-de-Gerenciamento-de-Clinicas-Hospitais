@@ -5,6 +5,7 @@ import com.example.clinica_medica.domain.dto.EnderecoDto;
 import com.example.clinica_medica.domain.dto.MedicoDto;
 import com.example.clinica_medica.domain.dto.MedicoSimplificadoDto;
 import com.example.clinica_medica.domain.exception.BusinessException;
+import com.example.clinica_medica.domain.model.Endereco;
 import com.example.clinica_medica.domain.model.Medico;
 import com.example.clinica_medica.domain.repository.MedicoRepository;
 import jakarta.transaction.Transactional;
@@ -26,18 +27,29 @@ public class MedicoService {
     @Autowired
     private ContatoService contatoService;
 
-    public List<ContatoDto> consultarContatosPeloIdMedico(Long id){
+    public List<ContatoDto> consultarContatosPeloIdMedico(Long idMedico){
         try {
 
-            return contatoService.buscarContatoPeloIdMedico(id);
+            medicoRepository.findById(idMedico)
+                    .orElseThrow(() -> new BusinessException("Medico não encontrado"));
+
+            List<ContatoDto> listaContato = contatoService.buscarContatoPeloIdMedico(idMedico);
+            if(listaContato.isEmpty()){
+                throw new BusinessException("Medico não possui endereços");
+            }
+
+            return listaContato;
 
         } catch (BusinessException e){
-            throw new BusinessException("Não foi possivel consultar os contatos do medico");
+            throw new BusinessException(e.getMessage());
         }
     }
 
     public void alterarContatoIdMedico(ContatoDto contatoDto, Long idMedico){
         try {
+
+            medicoRepository.findById(idMedico)
+                    .orElseThrow(() -> new BusinessException("Medico não encontrado"));
 
             contatoService.alterarContatoIdMedico(contatoDto, idMedico);
 
@@ -46,13 +58,45 @@ public class MedicoService {
         }
     }
 
-    public List<EnderecoDto> consultarEnderecoMedico(Long id){
+    public void adicionarContatoIdMedico(List<ContatoDto> contatoDto, Long idMedico){
         try {
 
-            return enderecoService.buscarEnderecoPeloIdMedico(id);
+            contatoService.adicionarContatoIdMedico(contatoDto, idMedico);
 
         } catch (BusinessException e){
-            throw new BusinessException("Não foi possivel consultar os endereços do medico");
+            throw new BusinessException(e.getMessage());
+        }
+    }
+
+    @Transactional
+    public void deletarContatoMedico(Long idMedico, Long idContato) throws BusinessException{
+        try {
+
+            medicoRepository.findById(idMedico)
+                    .orElseThrow(() -> new BusinessException("Medico não encontrado"));
+
+            contatoService.deletarContatoMedico(idMedico, idContato);
+
+        } catch (BusinessException e){
+            throw new BusinessException(e.getMessage());
+        }
+    }
+
+    public List<EnderecoDto> consultarEnderecoMedico(Long idMedico){
+        try {
+
+            medicoRepository.findById(idMedico)
+                    .orElseThrow(() -> new BusinessException("Medico não encontrado"));
+
+            List<EnderecoDto> listaEndereco = enderecoService.buscarEnderecoPeloIdMedico(idMedico);
+            if(listaEndereco.isEmpty()){
+                throw new BusinessException("Medico não possui endereços");
+            }
+
+            return listaEndereco;
+
+        } catch (BusinessException e){
+            throw new BusinessException(e.getMessage());
         }
     }
 
@@ -82,6 +126,9 @@ public class MedicoService {
 
     public void alterarEnderecoMedico(EnderecoDto enderecoDto, Long idMedico){
         try {
+
+            medicoRepository.findById(idMedico)
+                    .orElseThrow(() -> new BusinessException("Medico não encontrado"));
 
             enderecoService.alterarEnderecoIdMedico(enderecoDto, idMedico);
 

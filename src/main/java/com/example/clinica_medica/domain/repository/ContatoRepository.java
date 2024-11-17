@@ -15,6 +15,10 @@ public interface ContatoRepository extends JpaRepository<Contato, Long> {
 
     List<Contato> findByPacienteId(Long id);
 
+    void deleteByIdAndMedicoId(Long idContato, Long idMedico);
+
+    void deleteByIdAndPacienteId(Long idContato, Long idPaciente);
+
     @Modifying
     @Transactional
     @Query(value = """
@@ -42,5 +46,7 @@ public interface ContatoRepository extends JpaRepository<Contato, Long> {
             @Param("email") String email,
             @Param("telefone") String telefone
     );
+
+    Contato findOneById(Long idEndereco);
 
 }

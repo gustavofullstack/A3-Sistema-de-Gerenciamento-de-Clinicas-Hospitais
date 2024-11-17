@@ -5,7 +5,6 @@ import com.example.clinica_medica.domain.dto.EnderecoDto;
 import com.example.clinica_medica.domain.dto.PacienteDto;
 import com.example.clinica_medica.domain.dto.PacienteSimplificadoDto;
 import com.example.clinica_medica.domain.exception.BusinessException;
-import com.example.clinica_medica.domain.model.Endereco;
 import com.example.clinica_medica.domain.model.Paciente;
 import com.example.clinica_medica.domain.repository.PacienteRepository;
 import jakarta.transaction.Transactional;
@@ -30,10 +29,13 @@ public class PacienteService {
     public void alterarEnderecoPaciente(EnderecoDto enderecoDto, Long idPaciente){
         try {
 
+            pacienteRepository.findById(idPaciente)
+                    .orElseThrow(() -> new BusinessException("Paciente não encontrado"));
+
             enderecoService.alterarEnderecoIdPaciente(enderecoDto, idPaciente);
 
         } catch (BusinessException e){
-            throw new BusinessException("Não foi possivel consultar os contatos do paciente");
+            throw new BusinessException(e.getMessage());
         }
     }
 
@@ -50,7 +52,37 @@ public class PacienteService {
     public void alterarContatoIdPaciente(ContatoDto contatoDto, Long idPaciente){
         try {
 
+            pacienteRepository.findById(idPaciente)
+                    .orElseThrow(() -> new BusinessException("Paciente não encontrado"));
+
             contatoService.alterarContatoIdPaciente(contatoDto, idPaciente);
+
+        } catch (BusinessException e){
+            throw new BusinessException(e.getMessage());
+        }
+    }
+
+    public void adicionarContatoIdPaciente(List<ContatoDto> contatoDto, Long idPaciente){
+        try {
+
+            pacienteRepository.findById(idPaciente)
+                    .orElseThrow(() -> new BusinessException("Paciente não encontrado"));
+
+            contatoService.adicionarContatoIdPaciente(contatoDto, idPaciente);
+
+        } catch (BusinessException e){
+            throw new BusinessException(e.getMessage());
+        }
+    }
+
+    @Transactional
+    public void deletarContatoPaciente(Long idPaciente, Long idContato) throws BusinessException{
+        try {
+
+            pacienteRepository.findById(idPaciente)
+                    .orElseThrow(() -> new BusinessException("Paciente não encontrado"));
+
+            contatoService.deletarContatoPaciente(idPaciente, idContato);
 
         } catch (BusinessException e){
             throw new BusinessException(e.getMessage());
@@ -71,23 +103,39 @@ public class PacienteService {
         }
     }
 
-    public List<ContatoDto> consultarContatosPeloIdPaciente(Long id){
+    public List<ContatoDto> consultarContatosPeloIdPaciente(Long idPaciente){
         try {
 
-            return contatoService.buscarContatoPeloIdPaciente(id);
+            pacienteRepository.findById(idPaciente)
+                    .orElseThrow(() -> new BusinessException("Paciente não encontrado"));
+
+            List<ContatoDto> listaContato = contatoService.buscarContatoPeloIdPaciente(idPaciente);
+            if(listaContato.isEmpty()){
+                throw new BusinessException("Paciente não possui endereços");
+            }
+
+            return listaContato;
 
         } catch (BusinessException e){
-            throw new BusinessException("Não foi possivel consultar os contatos do paciente");
+            throw new BusinessException(e.getMessage());
         }
     }
 
-    public List<EnderecoDto> consultarEnderecosPaciente(Long id){
+    public List<EnderecoDto> consultarEnderecosPaciente(Long idPaciente){
         try {
 
-            return enderecoService.buscarEnderecoPeloIdPaciente(id);
+            pacienteRepository.findById(idPaciente)
+                    .orElseThrow(() -> new BusinessException("Paciente não encontrado"));
+
+            List<EnderecoDto> listaEndereco = enderecoService.buscarEnderecoPeloIdPaciente(idPaciente);
+            if(listaEndereco.isEmpty()){
+                throw new BusinessException("Paciente não possui endereços");
+            }
+
+            return listaEndereco;
 
         } catch (BusinessException e){
-            throw new BusinessException("Não foi possivel consultar os endereços do paciente");
+            throw new BusinessException(e.getMessage());
         }
     }
 

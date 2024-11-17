@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface EnderecoRepository extends JpaRepository<Endereco, Long> {
 
@@ -67,4 +68,5 @@ public interface EnderecoRepository extends JpaRepository<Endereco, Long> {
             @Param("rua") String rua
     );
 
+    Endereco findOneById(Long idEndereco);
 }
