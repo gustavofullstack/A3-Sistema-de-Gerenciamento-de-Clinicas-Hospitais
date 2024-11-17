@@ -5,7 +5,6 @@ import com.example.clinica_medica.domain.dto.EnderecoDto;
 import com.example.clinica_medica.domain.dto.MedicoDto;
 import com.example.clinica_medica.domain.dto.MedicoSimplificadoDto;
 import com.example.clinica_medica.domain.exception.BusinessException;
-import com.example.clinica_medica.domain.model.Endereco;
 import com.example.clinica_medica.domain.model.Medico;
 import com.example.clinica_medica.domain.repository.MedicoRepository;
 import jakarta.transaction.Transactional;
