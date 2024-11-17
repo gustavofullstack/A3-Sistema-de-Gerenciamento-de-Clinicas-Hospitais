@@ -123,6 +123,19 @@ public class PacienteController {
         }
     }
 
+    @PostMapping("/adicionar-endereco/{idPaciente}")
+    @ResponseStatus(HttpStatus.CREATED)
+    public ResponseEntity<Object> adicionarEnderecoPaciente(@RequestBody List<EnderecoDto> enderecosDto, @PathVariable("idPaciente") Long idPaciente){
+        try {
+
+            pacienteService.adicionarEnderecoIdPaciente(enderecosDto, idPaciente);
+            return ResponseEntity.noContent().build();
+
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(e.getMessage());
+        }
+    }
+
     @GetMapping("/buscar-contatos/{id}")
     public ResponseEntity<List<Object>> consultarContatosPeloIdPaciente(@PathVariable("id") Long id){
         try {
