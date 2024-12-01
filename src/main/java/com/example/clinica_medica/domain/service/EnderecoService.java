@@ -61,7 +61,7 @@ public class EnderecoService {
             }
 
             enderecoRepository.updateByPacienteId(idPaciente, enderecoDto.getId(), enderecoDto.getBairro(), enderecoDto.getCep(),
-                    enderecoDto.getCidade(), enderecoDto.getComplemento(), enderecoDto.getNumero(), enderecoDto.getRua());
+                    enderecoDto.getCidade(), enderecoDto.getEstado(), enderecoDto.getComplemento(), enderecoDto.getNumero(), enderecoDto.getRua());
 
         } catch (BusinessException e){
             throw new BusinessException(e.getMessage());
@@ -216,6 +216,7 @@ public class EnderecoService {
         enderecoDto.setBairro(endereco.getBairro());
         enderecoDto.setNumero(endereco.getNumero());
         enderecoDto.setCidade(endereco.getCidade());
+        enderecoDto.setEstado(endereco.getEstado());
         enderecoDto.setComplemento(endereco.getComplemento());
 
         return enderecoDto;
@@ -234,6 +235,7 @@ public class EnderecoService {
         endereco.setBairro(enderecoDto.getBairro());
         endereco.setNumero(enderecoDto.getNumero());
         endereco.setCidade(enderecoDto.getCidade());
+        endereco.setEstado(enderecoDto.getEstado());
         endereco.setComplemento(enderecoDto.getComplemento());
 
         return endereco;

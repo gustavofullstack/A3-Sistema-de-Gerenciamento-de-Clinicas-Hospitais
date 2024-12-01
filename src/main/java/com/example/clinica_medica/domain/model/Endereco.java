@@ -22,6 +22,7 @@ public class Endereco {
     private String bairro;
     private String numero;
     private String cidade;
+    private String estado;
     private String complemento;
 
     @ManyToOne

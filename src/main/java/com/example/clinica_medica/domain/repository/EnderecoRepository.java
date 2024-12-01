@@ -51,6 +51,7 @@ public interface EnderecoRepository extends JpaRepository<Endereco, Long> {
             cep=:cep,
             cidade=:cidade,
             complemento=:complemento,
+            estado=:estado,
             numero=:numero,
             rua=:rua
         WHERE paciente_id=:idPaciente
@@ -62,6 +63,7 @@ public interface EnderecoRepository extends JpaRepository<Endereco, Long> {
             @Param("bairro") String bairro,
             @Param("cep") String cep,
             @Param("cidade") String cidade,
+            @Param("estado") String estado,
             @Param("complemento") String complemento,
             @Param("numero") String numero,
             @Param("rua") String rua

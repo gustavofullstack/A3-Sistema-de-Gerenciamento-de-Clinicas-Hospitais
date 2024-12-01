@@ -31,9 +31,15 @@ public class MedicoDto {
     @JsonFormat(pattern = "dd-mm-yyyy")
     private Date dataNascimento;
 
+    @NotNull(message = "Numero de registro não pode ser nulo")
     private String numeroRegistro;
+
+    @NotNull(message = "Genero não pode ser nulo")
     private Genero genero;
+
+    @NotNull(message = "Especialização não pode ser nula")
     private Especializacao especializacao;
+
     private List<EnderecoDto> enderecos;
     private List<ContatoDto> contatos;
     private List<Consulta> consultas;
