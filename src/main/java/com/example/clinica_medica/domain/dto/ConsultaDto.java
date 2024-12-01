@@ -30,10 +30,10 @@ public class ConsultaDto {
     private String observacoesMedicas;
 
     @NotNull(message = "Motivo da consulta não pode ser nulo")
-    private PacienteDto paciente;
+    private PacienteSimplificadoDto paciente;
 
     @NotNull(message = "Medico não pode ser nulo")
-    private MedicoDto medico;
+    private MedicoSimplificadoDto medico;
 
     private List<Prescricao> prescricoes;
     private List<Exame> exames;

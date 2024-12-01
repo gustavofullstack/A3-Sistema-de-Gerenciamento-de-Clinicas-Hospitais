@@ -199,7 +199,6 @@ public class MedicoService {
         medicoDto.setNome(medico.getNome());
         medicoDto.setNumeroRegistro(medico.getNumeroRegistro());
         medicoDto.setEspecializacao(medico.getEspecializacao());
-        medicoDto.setConsultas(medico.getConsultas());
 
         return medicoDto;
     }

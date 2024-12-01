@@ -42,6 +42,5 @@ public class MedicoDto {
 
     private List<EnderecoDto> enderecos;
     private List<ContatoDto> contatos;
-    private List<Consulta> consultas;
 
 }

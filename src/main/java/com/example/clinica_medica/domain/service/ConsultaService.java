@@ -107,8 +107,8 @@ public class ConsultaService {
             ConsultaDto consultaDto = new ConsultaDto();
 
             consultaDto.setId(consulta.getId());
-            consultaDto.setPaciente(pacienteService.toDto(consulta.getPaciente()));
-            consultaDto.setMedico(medicoService.toDto(consulta.getMedico()));
+            consultaDto.setPaciente(pacienteService.toDtoSimplificado(consulta.getPaciente()));
+            consultaDto.setMedico(medicoService.toDtoSimplificado(consulta.getMedico()));
             consultaDto.setMotivoConsulta(consulta.getMotivoConsulta());
             consultaDto.setDataHora(consulta.getDataHora());
             consultaDto.setExames(consulta.getExames());
@@ -131,8 +131,8 @@ public class ConsultaService {
             Consulta consulta = new Consulta();
 
             consulta.setId(consultaDto.getId());
-            consulta.setPaciente(pacienteService.toEntity(consultaDto.getPaciente()));
-            consulta.setMedico(medicoService.toEntity(consultaDto.getMedico()));
+            consulta.setPaciente(pacienteService.toEntitySimplificado(consultaDto.getPaciente()));
+            consulta.setMedico(medicoService.toEntitySimplificado(consultaDto.getMedico()));
             consulta.setMotivoConsulta(consultaDto.getMotivoConsulta());
             consulta.setDataHora(consultaDto.getDataHora());
             consulta.setExames(consultaDto.getExames());
