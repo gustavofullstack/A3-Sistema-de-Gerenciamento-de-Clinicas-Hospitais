@@ -13,7 +13,6 @@ public interface PacienteRepository extends JpaRepository<Paciente, Long> {
 
     Paciente findOneById(Long id);
 
-
     @Modifying
     @Transactional
     @Query(value = "UPDATE educamed.paciente " +

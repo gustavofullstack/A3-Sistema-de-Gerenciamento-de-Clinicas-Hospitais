@@ -202,4 +202,12 @@
 
         }
 
+        public List<Consulta> toEntityListSimplificado(List<ConsultaSimplificadaDto> consultas) {
+
+            return consultas.stream()
+                    .map(this::toEntitySimplificada)
+                    .collect(Collectors.toList());
+
+        }
+
     }

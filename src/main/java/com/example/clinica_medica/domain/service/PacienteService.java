@@ -21,6 +21,12 @@ public class PacienteService {
     private PacienteRepository pacienteRepository;
 
     @Autowired
+    private HistoricoMedicoService historicoMedicoService;
+
+    @Autowired
+    private ConsultaService consultaService;
+
+    @Autowired
     private EnderecoService enderecoService;
 
     @Autowired
@@ -211,8 +217,8 @@ public class PacienteService {
             pacienteDto.setCpf(paciente.getCpf());
             pacienteDto.setDataNascimento(paciente.getDataNascimento());
             pacienteDto.setGenero(paciente.getGenero());
-            pacienteDto.setConsultas(paciente.getConsultas());
-            pacienteDto.setHistoricoMedico(paciente.getHistoricoMedico());
+            pacienteDto.setConsultas(consultaService.toDtoListSimplificado(paciente.getConsultas()));
+            pacienteDto.setHistoricoMedico(historicoMedicoService.toDtoSimplificadoList(paciente.getHistoricoMedico()));
 
             return pacienteDto;
 
@@ -254,8 +260,13 @@ public class PacienteService {
             paciente.setNome(pacienteDto.getNome());
             paciente.setCpf(pacienteDto.getCpf());
             paciente.setDataNascimento(pacienteDto.getDataNascimento());
-            paciente.setConsultas(pacienteDto.getConsultas());
-            paciente.setHistoricoMedico(pacienteDto.getHistoricoMedico());
+            if(pacienteDto.getConsultas() != null){
+                paciente.setConsultas(consultaService.toEntityListSimplificado(pacienteDto.getConsultas()));
+            }
+            if(pacienteDto.getHistoricoMedico() != null){
+                paciente.setHistoricoMedico(historicoMedicoService.toEntitySimplificadaList(pacienteDto.getHistoricoMedico()));
+            }
+
             paciente.setGenero(pacienteDto.getGenero());
 
             return paciente;

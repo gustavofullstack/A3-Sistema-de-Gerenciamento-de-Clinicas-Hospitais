@@ -119,12 +119,6 @@ public class PrescricaoService {
                 throw new BusinessException("Consulta não encontrada para precrição");
             }
 
-            for (PrescricaoDto prescricaoDtoVerify : consulta.getPrescricoes()){
-                if(!prescricaoDtoVerify.getId().equals(prescricaoDto.getId())){
-                    throw new BusinessException("Prescrição não pertence a essa consulta");
-                }
-            }
-
             if(!paciente.getId().equals(prescricaoDto.getConsulta().getPaciente().getId())){
                 throw new BusinessException("Prescrição não pertence a esse paciente");
             }

@@ -20,7 +20,7 @@ public class ExameController {
     private ExameService exameService;
     
     @GetMapping("/buscar-todos")
-    public ResponseEntity<List<Object>> buscarTodasExame(){
+    public ResponseEntity<List<Object>> buscarTodosExame(){
         try {
 
             List<ExameDto> exame = exameService.buscarTodasExame();
@@ -37,7 +37,7 @@ public class ExameController {
     }
 
     @GetMapping("/buscar-exame/{idExame}")
-    public ResponseEntity<Object> exameDadosMedicoPeloId(@PathVariable("idExame") Long idExame) {
+    public ResponseEntity<Object> examePeloId(@PathVariable("idExame") Long idExame) {
         try {
 
             ExameDto exameDto = exameService.buscarExameId(idExame);
@@ -54,7 +54,7 @@ public class ExameController {
     }
 
     @PostMapping("/adicionar-exame")
-    public ResponseEntity<Object> agendarExame(@Valid @RequestBody ExameDto exameDto){
+    public ResponseEntity<Object> adicionarExame(@Valid @RequestBody ExameDto exameDto){
         try {
 
             exameService.adicionarExame(exameDto);

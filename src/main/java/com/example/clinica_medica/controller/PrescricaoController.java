@@ -20,7 +20,7 @@ public class PrescricaoController {
     private PrescricaoService prescricaoService;
 
     @GetMapping("/buscar-todos")
-    public ResponseEntity<List<Object>> buscarTodasPrescricao(){
+    public ResponseEntity<List<Object>> buscarTodasPrescricoes(){
         try {
 
             List<PrescricaoDto> prescricao = prescricaoService.buscarTodasPrescricao();
@@ -37,7 +37,7 @@ public class PrescricaoController {
     }
 
     @GetMapping("/buscar-prescricao/{idPrescricao}")
-    public ResponseEntity<Object> prescricaorDadosMedicoPeloId(@PathVariable("idPrescricao") Long idPrescricao) {
+    public ResponseEntity<Object> prescricaorPeloId(@PathVariable("idPrescricao") Long idPrescricao) {
         try {
 
             PrescricaoDto prescricaoDto = prescricaoService.buscarPrescricaoId(idPrescricao);
@@ -54,7 +54,7 @@ public class PrescricaoController {
     }
 
     @PostMapping("/adicionar-prescricao")
-    public ResponseEntity<Object> agendarPrescricao(@Valid @RequestBody PrescricaoDto prescricaoDto){
+    public ResponseEntity<Object> adicionarPrescricao(@Valid @RequestBody PrescricaoDto prescricaoDto){
         try {
 
             prescricaoService.adicionarPrescricao(prescricaoDto);

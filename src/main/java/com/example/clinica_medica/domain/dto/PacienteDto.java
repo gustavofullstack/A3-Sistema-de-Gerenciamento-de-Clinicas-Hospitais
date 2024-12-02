@@ -35,7 +35,7 @@ public class PacienteDto {
     private List<EnderecoDto> enderecos;
     private List<ContatoDto> contatos;
 
-    private List<HistoricoMedico> historicoMedico;
-    private List<Consulta> consultas;
+    private List<HistoricoMedicoSimplificadoDto> historicoMedico;
+    private List<ConsultaSimplificadaDto> consultas;
 
 }
