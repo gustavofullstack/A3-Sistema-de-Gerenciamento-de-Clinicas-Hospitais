@@ -7,6 +7,7 @@ import com.example.clinica_medica.domain.exception.BusinessException;
 import com.example.clinica_medica.domain.model.Prescricao;
 import com.example.clinica_medica.domain.repository.PrescricaoRepository;
 import jakarta.transaction.Transactional;
+import org.hibernate.validator.internal.util.stereotypes.Lazy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +28,7 @@ public class PrescricaoService {
     private PacienteService pacienteService;
 
     @Autowired
+    @Lazy
     private ConsultaService consultaService;
 
     public PrescricaoDto buscarPrescricaoId(Long idPrescricao){
@@ -117,8 +119,8 @@ public class PrescricaoService {
                 throw new BusinessException("Consulta não encontrada para precrição");
             }
 
-            for (Prescricao prescricao : consulta.getPrescricoes()){
-                if(!prescricao.getId().equals(prescricaoDto.getId())){
+            for (PrescricaoDto prescricaoDtoVerify : consulta.getPrescricoes()){
+                if(!prescricaoDtoVerify.getId().equals(prescricaoDto.getId())){
                     throw new BusinessException("Prescrição não pertence a essa consulta");
                 }
             }

@@ -35,7 +35,7 @@ public class ConsultaDto {
     @NotNull(message = "Medico não pode ser nulo")
     private MedicoSimplificadoDto medico;
 
-    private List<Prescricao> prescricoes;
-    private List<Exame> exames;
+    private List<PrescricaoDto> prescricoes;
+    private List<ExameDto> exames;
 
 }

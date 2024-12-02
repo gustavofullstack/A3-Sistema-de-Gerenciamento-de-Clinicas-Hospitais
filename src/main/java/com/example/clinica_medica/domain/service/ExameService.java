@@ -120,8 +120,8 @@ public class ExameService {
                 throw new BusinessException("Consulta não encontrada para precrição");
             }
 
-            for (Exame exame : consulta.getExames()){
-                if(!exame.getId().equals(exameDto.getId())){
+            for (ExameDto exameDtoVerify : consulta.getExames()){
+                if(!exameDtoVerify.getId().equals(exameDto.getId())){
                     throw new BusinessException("Exame não pertence a essa consulta");
                 }
             }
