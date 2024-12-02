@@ -175,6 +175,7 @@ public class ConsultaService {
 
             Consulta consulta = new Consulta();
 
+            consulta.setId(consultaSimplificadaDto.getId());
             consulta.setPaciente(pacienteService.toEntitySimplificado(consultaSimplificadaDto.getPaciente()));
             consulta.setMedico(medicoService.toEntitySimplificado(consultaSimplificadaDto.getMedico()));
             consulta.setMotivoConsulta(consultaSimplificadaDto.getMotivoConsulta());

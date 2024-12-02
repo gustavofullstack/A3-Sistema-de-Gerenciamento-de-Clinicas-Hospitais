@@ -2,7 +2,6 @@ package com.example.clinica_medica.controller;
 
 import com.example.clinica_medica.domain.dto.ConsultaDto;
 import com.example.clinica_medica.domain.dto.ConsultaSimplificadaDto;
-import com.example.clinica_medica.domain.dto.MedicoDto;
 import com.example.clinica_medica.domain.service.ConsultaService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
